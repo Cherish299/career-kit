@@ -56,3 +56,29 @@ jobs:
       - name: Run API schema & state machine tests
         run: python -m pytest
         working-directory: services/api
+
+      - name: Boot smoke (real process + static + sample import)
+        run: |
+          CAREER_DATABASE_URL="sqlite:///./smoke.db" python -m uvicorn app.main:app --port 8099 --log-level warning &
+          sleep 4
+          curl -fsS http://127.0.0.1:8099/api/health | grep -q '"ok"'
+          curl -fsS http://127.0.0.1:8099/ | grep -q 'CareerOS'
+          python - <<'EOF'
+          import json, urllib.request
+          def post(path, payload):
+              req = urllib.request.Request("http://127.0.0.1:8099" + path,
+                  data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"}, method="POST")
+              with urllib.request.urlopen(req, timeout=15) as r:
+                  return json.loads(r.read())
+          resume = json.load(open("../../examples/sample-resume.json", encoding="utf-8"))
+          p = post("/api/profiles", {"resume_json": resume})
+          assert p["display_name"] and p["preference"]["graduate_year"] == "2027", "import failed"
+          j = post("/api/jobs", {"title": "RAG后端", "location": "深圳", "source": "manual",
+                                 "company_name": "示例公司", "requirements": "Python FastAPI RAG Neo4j"})
+          m = post(f"/api/matches/analyze?profile_id={p['id']}&job_id={j['id']}", {})
+          assert m["scores"]["total"] > 0, "match failed"
+          a = post("/api/applications", {"profile_id": p["id"], "job_id": j["id"], "status": "discovered"})
+          print("boot smoke ok: import/match/application", m["scores"]["total"])
+          EOF
+          kill %1 2>/dev/null || true
+        working-directory: services/api

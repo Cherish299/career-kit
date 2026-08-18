@@ -6,8 +6,8 @@
 
 | 里程碑 | 名称 | 目标日期 | 状态 |
 | --- | --- | --- | --- |
-| M0 | 工程基线 | 第 1 周周末 | 🔄 进行中（Day 1 已启动） |
-| M1 | MVP 闭环 | 第 4 周周末 | ⏳ |
+| M0 | 工程基线 | 第 1 周周末 | ✅ 完成（Day 1-7，CI 绿 + 真实进程启动冒烟） |
+| M1 | MVP 闭环 | 第 4 周周末 | 🔄 进行中（#1-#7 完成，剩 #8 演示/Release） |
 | M2 | 完整求职闭环 | 第 8 周周末 | ⏳ |
 | M3 | 公开发布 v1.0 | 第 12 周周末 | ⏳ |
 
@@ -33,8 +33,8 @@
 - [x] **Day 3 Schema**（#2）：Profile/Experience/Skill/Preference/Company/Job/JobSnapshot/MatchReport/ResumeVersion/Application/ApplicationEvent/InterviewPlan 共 12 实体 SQLAlchemy 模型 + Pydantic schemas + Application 状态机 + Alembic 骨架；pytest 19 项全过（SQLite 内存库）
 - [x] **Day 4 后端骨架**（#3/#4/#5/#6/#7）：FastAPI 健康检查 + Profile/Job/Application/Match/ResumeVersion CRUD；Resume Kit JSON 导入（importer）；规则匹配（matcher：硬条件+关键词+证据）；投递状态机+事件；Docker Compose PostgreSQL；API 集成测试 24 项全过
 - [x] **Day 5 前端骨架**：apps/web 原生 JS 工作台（个人中心导入/岗位录入/匹配/投递看板/简历版本），FastAPI 静态服务，本地 E2E 全链路验证通过
-- [ ] **Day 6 迁移与测试**：resume JSON 导入（已随 #3 完成）；匿名样例数据；补充测试
-- [ ] **Day 7 验收与复盘**：干净环境按 README 启动；2 分钟演示；问题清单
+- [x] **Day 6 迁移与测试**：resume JSON 导入（随 #3 完成）；匿名样例数据（examples/）；补充测试
+- [x] **Day 7 验收与复盘**：CI 增加真实进程启动冒烟（uvicorn + 静态页 + 样例导入/匹配/投递）；README 快速开始可复现；M0 验收通过
 
 ## 现有资产（legacy）清单
 
