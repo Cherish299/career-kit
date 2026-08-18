@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 岗刷题 · 笔试面试</title>
+<link rel="stylesheet" href="style.css">
+<!--__INTERVIEW_KIT_DATA__-->
+</head>
+<body>
+<div id="app" class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">🧠</span> AI 岗刷题 <span class="badge">笔试 · 面试</span></div>
+    <div class="topbar-actions">
+      <span id="saveStatus" class="save-status"></span>
+      <button id="btnTheme" class="btn ghost" title="切换明暗主题">🌓</button>
+      <button id="btnExport" class="btn ghost" title="导出学习进度 JSON">进度导出</button>
+      <button id="btnImport" class="btn ghost" title="从 JSON 恢复学习进度">导入</button>
+    </div>
+  </header>
+  <nav class="tabs" id="tabs">
+    <button data-tab="plan" class="tab">🎯 我的方案</button>
+    <button data-tab="bank" class="tab active">📚 题库</button>
+    <button data-tab="written" class="tab">✍️ 笔试模拟</button>
+    <button data-tab="interview" class="tab">🎤 面试模拟</button>
+    <button data-tab="stats" class="tab">📈 学习统计</button>
+  </nav>
+  <main class="main">
+    <section id="tab-plan" class="tab-panel">
+      <div id="planBody" class="mode-body"></div>
+    </section>
+    <section id="tab-bank" class="tab-panel active">
+      <div class="bank-layout">
+        <aside class="bank-side" id="bankSide"></aside>
+        <div class="bank-main">
+          <div class="bank-toolbar">
+            <input id="searchInput" type="search" placeholder="搜索题目关键词，如：LoRA / KV Cache / 过拟合…">
+            <select id="typeFilter"><option value="">全部题型</option></select>
+            <select id="diffFilter"><option value="">全部难度</option></select>
+            <button id="btnOnlyFav" class="btn small ghost">⭐ 只看收藏</button>
+            <button id="btnOnlyWrong" class="btn small ghost">❌ 只看错题</button>
+            <span id="bankCount" class="bank-count"></span>
+          </div>
+          <div id="bankList" class="bank-list"></div>
+        </div>
+      </div>
+    </section>
+    <section id="tab-written" class="tab-panel">
+      <div id="writtenBody" class="mode-body"></div>
+    </section>
+    <section id="tab-interview" class="tab-panel">
+      <div id="interviewBody" class="mode-body"></div>
+    </section>
+    <section id="tab-stats" class="tab-panel">
+      <div id="statsBody" class="mode-body"></div>
+    </section>
+  </main>
+  <div id="modalRoot"></div>
+  <div id="toastRoot" class="toast-root"></div>
+</div>
+<script src="js/q-core.js"></script>
+<script src="js/q-llm.js"></script>
+<script src="js/q-extra.js"></script>
+<script src="js/q-rag.js"></script>
+<script src="js/q-agent.js"></script>
+<script src="js/q-custom.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

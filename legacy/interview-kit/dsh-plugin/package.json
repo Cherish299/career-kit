@@ -1,0 +1,38 @@
+{
+  "name": "dsh-interview-kit",
+  "version": "1.0.0",
+  "description": "AI 开发岗笔试/面试刷题：152 题高频题库（机器学习/深度学习/大模型/训练微调/推理部署/数学/手撕代码/场景/行为）、笔试模拟自动判分、面试模拟、错题本与统计（DSH 客户端插件）",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "default": "./dist/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-layout"
+      ],
+      "platform": "web"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "plugin",
+    "interview",
+    "quiz",
+    "刷题",
+    "面试",
+    "AI"
+  ]
+}
