@@ -32,3 +32,5 @@ Thumbs.db
 htmlcov/
 .pytest_cache/
 *.pyc
+*.db
+*.sqlite3

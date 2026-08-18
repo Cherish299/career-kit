@@ -1,0 +1,26 @@
+[
+  {
+    "title": "AI 应用开发工程师（RAG 方向）",
+    "company_name": "示例科技公司",
+    "location": "深圳",
+    "source": "manual",
+    "requirements": "熟悉 Python、FastAPI；掌握 RAG 检索链路（向量检索、重排序）；了解大模型应用与 Agent；熟悉 Neo4j 或图数据库加分",
+    "description": "负责 RAG 后端开发，构建知识图谱辅助检索，参与 Agent 工作流设计。"
+  },
+  {
+    "title": "大模型应用开发实习生",
+    "company_name": "示例研究院",
+    "location": "北京",
+    "source": "manual",
+    "requirements": "熟悉 LLM API 调用与 Prompt 工程；掌握 Python 与 Pydantic；了解多模态模型优先",
+    "description": "参与 LLM/VLM 应用开发，负责结构化输出与结果校验。"
+  },
+  {
+    "title": "后端开发工程师（应届）",
+    "company_name": "示例互联网",
+    "location": "广州",
+    "source": "manual",
+    "requirements": "熟悉 Java 或 Python；掌握数据库与缓存；了解分布式基础",
+    "description": "负责业务后端接口开发与性能优化。"
+  }
+]

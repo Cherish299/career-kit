@@ -1,0 +1,99 @@
+{
+  "app": "resume-kit",
+  "version": 2,
+  "exportedAt": "2026-08-18T00:00:00.000Z",
+  "resume": {
+    "basic": {
+      "name": "示例同学",
+      "gender": "男",
+      "birth": "2001.06",
+      "phone": "13800000000",
+      "email": "demo@example.com",
+      "city": "北京",
+      "website": "",
+      "github": "",
+      "photo": ""
+    },
+    "target": {
+      "position": "AI 应用开发 / RAG 后端",
+      "industry": "互联网",
+      "city": "深圳/广州/北京",
+      "salary": "20-25k",
+      "availability": "2027.7月",
+      "jobType": "校招"
+    },
+    "education": [
+      {
+        "school": "示例理工大学",
+        "major": "控制科学与工程",
+        "degree": "硕士",
+        "start": "2024-09",
+        "end": "2027-06",
+        "gpa": "3.4",
+        "rank": "前 20%",
+        "courses": "模式识别与人工智能、数理统计、矩阵分析",
+        "honors": ""
+      },
+      {
+        "school": "示例理工大学",
+        "major": "物联网工程",
+        "degree": "本科",
+        "start": "2020-09",
+        "end": "2024-06",
+        "gpa": "3.2",
+        "rank": "",
+        "courses": "数据结构、操作系统、计算机网络",
+        "honors": "校级奖学金"
+      }
+    ],
+    "internships": [
+      {
+        "company": "示例数据中心（研究所）",
+        "title": "AI 开发实习生",
+        "start": "2025-07",
+        "end": "至今",
+        "content": "承担文献智能抽取系统的 AI 功能开发，完成需求梳理、方案验证及链路联调。\n实现 LLM/VLM 结构化抽取能力，结合 Schema 校验、结果规范化及有限重试处理模型异常输出。\n设计文档解析、相关性筛选、数值抽取、语义回填等阶段接口，通过结构化状态与日志实现任务追踪。"
+      }
+    ],
+    "projects": [
+      {
+        "name": "示例文献多智能体抽取系统",
+        "role": "核心开发",
+        "tech": "Python / LLM / VLM / Pydantic / RAG / FastAPI / Neo4j / FAISS / pytest",
+        "start": "2025-11",
+        "end": "2026-08",
+        "content": "设计多阶段抽取工作流，拆分为文档解析、图表筛选、数值抽取、语义补全和结果审核等阶段。\n实现 LLM/VLM 多模态抽取链路，使用 Pydantic 约束输出结构，结合重试及审核队列隔离异常结果。\n构建语义切分、向量检索与重排序链路，从论文上下文召回证据补全缺失字段。\n基于本体设计 Observation/Measurement 数据契约，映射至 Neo4j 建立证据溯源关联。"
+      }
+    ],
+    "campus": [
+      {
+        "org": "自动化学院",
+        "role": "辅导员助理",
+        "start": "2021-09",
+        "end": "2024-06",
+        "content": "协助开展学生事务、综合测评及信息统计，完成年级通知传达和材料整理。"
+      }
+    ],
+    "research": [
+      {
+        "kind": "论文",
+        "title": "示例：面向科研图表的多模态数值抽取方法",
+        "role": "第一作者",
+        "venue": "示例期刊（投稿中）",
+        "date": "2026-05",
+        "note": "聚焦图表数值抽取与语义回填"
+      }
+    ],
+    "awards": [
+      { "name": "校级一等奖学金", "level": "校级", "date": "2024-10" }
+    ],
+    "skills": [
+      { "category": "编程语言", "items": "熟悉 Python，掌握面向对象、类型标注、异常处理；了解 Java、C。" },
+      { "category": "LLM 应用", "items": "掌握 LLM/VLM API 调用、Prompt 设计、结构化输出、Schema 校验、重试降级及多阶段 Agent 工作流。" },
+      { "category": "RAG 与数据", "items": "掌握文档解析、语义切分、Embedding、向量检索与重排序；使用过 FAISS、Chroma、Neo4j。" },
+      { "category": "后端与工程", "items": "使用 FastAPI、Pydantic、Streamlit、pytest、Poetry、Git，具备 REST API 与自动化测试实践。" }
+    ],
+    "evaluation": "独立完成文献抽取系统核心链路，具备从需求到落地的一体化工程能力。",
+    "extra": ""
+  }
+}

@@ -26,8 +26,21 @@
 ```bash
 npm run build     # 构建两个工具 → legacy/*/dist/*.html（双击即用）
 npm run test      # 规则引擎单测 + 题库校验 + DOM 冒烟
-npm run dev       # 开发启动（后端骨架就绪后接线）
 ```
+
+## 快速开始（MVP 工作台：后端 + 前端一体）
+
+```bash
+cd services/api
+pip install -e ".[dev]"            # 安装依赖
+python -m pytest                    # 跑测试（SQLite，无需数据库，24 项）
+uvicorn app.main:app --reload       # 启动（默认连 PostgreSQL；无 PG 时：
+CAREER_DATABASE_URL=sqlite:///./dev.db uvicorn app.main:app --reload
+```
+
+浏览器打开 <http://127.0.0.1:8000>，用 `examples/sample-resume.json` 导入画像、`examples/sample-jobs.json` 录入岗位，即可体验完整闭环：**画像 → 岗位 → 匹配报告 → 投递看板 → 简历副本**。
+
+> 生产数据库：仓库根目录 `docker compose up -d` 启动 PostgreSQL。
 
 ## 路线图
 
@@ -37,11 +50,13 @@ npm run dev       # 开发启动（后端骨架就绪后接线）
 
 ```
 career-kit/
-├── apps/                  # 统一 Web 前端（第 2 周起）
-├── services/              # FastAPI 后端 / 采集服务（第 2 周起）
-├── packages/              # 共享 Schema 与规则引擎（第 2 周起）
-├── legacy/                # 现有工具（resume-kit / interview-kit）
-└── docs/                  # 计划书与路线图
+├── apps/web              # 统一 Web 工作台（原生 JS MVP，规划迁移 React）
+├── services/api          # FastAPI 后端（Schema/CRUD/匹配/状态机，24 项测试）
+├── services/crawler      # 官网采集（第 5 周起）
+├── packages/             # 共享包（profile-schema / resume-engine / job-matcher / interview-kit）
+├── legacy/               # 现有工具（resume-kit / interview-kit）
+├── examples/             # 匿名样例数据（画像 / 岗位）
+└── docs/                 # 计划书与路线图
 ```
 
 ## 贡献
