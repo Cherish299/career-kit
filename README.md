@@ -21,16 +21,12 @@
 - `legacy/resume-kit` — **简历工作台**（6 岗位模板 × 4 风格、A4 预览、规则体检、求职台、可选 AI 优化、DSH 插件）
 - `legacy/interview-kit` — **AI 岗刷题**（210 题：机器学习/深度学习/大模型/RAG/Agent/知识图谱/算法/场景/行为，笔试/面试模拟、学习统计、个性化方案、DSH 插件）
 
-两个 legacy 工具均**纯前端、无构建依赖**（Node 即可构建），可直接使用：
+两个 legacy 工具均**纯前端、无构建依赖**（Node 即可构建）。统一命令（仓库根目录）：
 
 ```bash
-# 简历工作台
-cd legacy/resume-kit && node scripts/build.js   # 生成 dist/resume-workbench.html（双击即用）
-node scripts/test-engine.js                      # 体检规则引擎单测
-
-# AI 刷题
-cd legacy/interview-kit && node scripts/build.js # 生成 dist/interview-kit.html（双击即用）
-node scripts/test-data.js                        # 题库校验
+npm run build     # 构建两个工具 → legacy/*/dist/*.html（双击即用）
+npm run test      # 规则引擎单测 + 题库校验 + DOM 冒烟
+npm run dev       # 开发启动（后端骨架就绪后接线）
 ```
 
 ## 路线图

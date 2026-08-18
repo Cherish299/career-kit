@@ -29,7 +29,7 @@
 ## 第 1 周（M0）开工清单
 
 - [x] **Day 1 仓库卫生**：新建 career-kit 仓库基线；legacy 迁入；.gitignore/LICENSE/README；清理个人路径与中文产物名
-- [ ] **Day 2 统一工程**：apps/services/packages 目录；统一 build/test 命令
+- [x] **Day 2 统一工程**：apps/services/packages 目录与说明；根级统一 build/test 命令（`npm run build` / `npm run test`）；CI 接入统一命令
 - [ ] **Day 3 Schema**：Profile/Experience/Skill/Preference/Job/Application；Pydantic 模型与数据库迁移
 - [ ] **Day 4 后端骨架**：FastAPI 健康检查；Profile/Job/Application CRUD；Docker Compose 起 PostgreSQL
 - [ ] **Day 5 前端骨架**：统一导航、个人中心空态、岗位列表、投递看板；接通真实 API

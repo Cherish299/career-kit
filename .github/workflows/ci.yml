@@ -18,27 +18,13 @@ jobs:
         with:
           node-version: 20
 
-      - name: Build resume-kit (legacy)
-        run: node scripts/build.js
-        working-directory: legacy/resume-kit
+      - name: Build (unified)
+        run: npm run build
 
-      - name: Run resume engine tests
-        run: node scripts/test-engine.js
-        working-directory: legacy/resume-kit
-
-      - name: Build interview-kit (legacy)
-        run: node scripts/build.js
-        working-directory: legacy/interview-kit
-
-      - name: Run question bank validation
-        run: node scripts/test-data.js
-        working-directory: legacy/interview-kit
-
-      - name: Smoke tests (jsdom)
+      - name: Test (unified)
         run: |
-          npm ci --prefix scripts/smoke
-          node scripts/smoke/smoke-dom.mjs
-        working-directory: legacy/resume-kit
+          npm ci --prefix legacy/resume-kit/scripts/smoke
+          npm run test
 
       - name: Secret & path scan
         run: |
