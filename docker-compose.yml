@@ -1,0 +1,23 @@
+# CareerOS 开发环境：PostgreSQL
+# 用法：docker compose up -d
+# 连接：postgresql+psycopg2://career:career@localhost:5432/career_os
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: career-os-db
+    environment:
+      POSTGRES_USER: career
+      POSTGRES_PASSWORD: career
+      POSTGRES_DB: career_os
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U career -d career_os"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

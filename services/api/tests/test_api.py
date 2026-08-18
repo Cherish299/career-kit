@@ -1,0 +1,208 @@
+"""API 集成测试：导入 / 岗位 / 匹配 / 投递状态机 / 简历版本（SQLite 内存库）。"""
+import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
+
+from app.api.deps import get_db
+from app.db.base import Base
+from app.main import app
+
+# 匿名化的 Resume Kit JSON 样本（结构对齐 resume-kit v2 导出）
+SAMPLE_RESUME = {
+    "app": "resume-kit",
+    "version": 2,
+    "resume": {
+        "basic": {
+            "name": "示例用户",
+            "phone": "13800000000",
+            "email": "demo@example.com",
+            "city": "北京",
+        },
+        "target": {
+            "position": "AI 应用开发",
+            "industry": "互联网",
+            "city": "深圳/广州/北京",
+            "salary": "20-25k",
+            "availability": "2027.7月",
+            "jobType": "校招",
+        },
+        "education": [
+            {
+                "school": "示例大学",
+                "major": "控制科学与工程",
+                "degree": "硕士",
+                "start": "2024-09",
+                "end": "2027-06",
+                "gpa": "3.4",
+                "courses": "模式识别与人工智能",
+            }
+        ],
+        "internships": [
+            {
+                "company": "示例数据中心",
+                "title": "AI 开发实习生",
+                "start": "2025-07",
+                "end": "至今",
+                "content": "实现 LLM/VLM 结构化抽取能力\nSchema 校验与有限重试",
+            }
+        ],
+        "projects": [
+            {
+                "name": "示例文献抽取系统",
+                "role": "核心开发",
+                "tech": "Python / FastAPI / Neo4j / FAISS",
+                "content": "多阶段抽取工作流\nRAG 语义回填",
+            }
+        ],
+        "campus": [],
+        "research": [],
+        "awards": [],
+        "skills": [
+            {"category": "RAG 与数据", "items": "FAISS、Chroma、Neo4j、RDFLib"},
+            {"category": "LLM 应用", "items": "Prompt 设计、结构化输出、Schema 校验"},
+        ],
+        "evaluation": "独立完成抽取系统",
+        "extra": "",
+    },
+}
+
+
+@pytest.fixture()
+def client():
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,  # 内存库单连接共享（TestClient 跨线程）
+    )
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine, expire_on_commit=False)
+
+    def override_get_db():
+        db = Session()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+    with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()
+    engine.dispose()
+
+
+def test_health(client):
+    r = client.get("/api/health")
+    assert r.status_code == 200
+    assert r.json()["status"] == "ok"
+
+
+def test_import_resume_kit_json(client):
+    """#3：导入 Resume Kit JSON → Profile 结构化。"""
+    r = client.post("/api/profiles", json={"resume_json": SAMPLE_RESUME})
+    assert r.status_code == 201, r.text
+    data = r.json()
+    assert data["display_name"] == "示例用户"
+    types = {e["type"] for e in data["experiences"]}
+    assert {"education", "internship", "project"} <= types
+    edu = next(e for e in data["experiences"] if e["type"] == "education")
+    assert edu["start_date"] == "2024-09" and edu["end_date"] == "2027-06"
+    intern = next(e for e in data["experiences"] if e["type"] == "internship")
+    assert intern["end_date"] == "至今"
+    assert len(data["skills"]) == 2
+    pref = data["preference"]
+    assert "AI 应用开发" in pref["roles"]
+    assert pref["graduate_year"] == "2027"
+
+
+def test_job_and_match_flow(client):
+    """#4 + #5：录入 JD → 规则匹配 → 可解释报告。"""
+    profile = client.post("/api/profiles", json={"resume_json": SAMPLE_RESUME}).json()
+
+    job_payload = {
+        "title": "AI 应用开发工程师（RAG 方向）",
+        "location": "深圳",
+        "source": "manual",
+        "company_name": "示例科技公司",
+        "requirements": "熟悉 Python、FastAPI、RAG 与向量检索，了解大模型应用",
+        "description": "负责 RAG 后端开发，使用 Neo4j 构建知识图谱",
+    }
+    r = client.post("/api/jobs", json=job_payload)
+    assert r.status_code == 201, r.text
+    job = r.json()
+    assert job["company_id"] is not None
+
+    mr = client.post("/api/matches/analyze", params={"profile_id": profile["id"], "job_id": job["id"]})
+    assert mr.status_code == 200, mr.text
+    report = mr.json()
+    assert report["blocked"] is False  # 城市深圳在意向内
+    assert report["scores"]["total"] > 0
+    assert any(e["in_job"] and e["in_profile"] for e in report["evidence"])
+    assert any(g for g in report["gaps"]) or any(s for s in report["strengths"])
+
+
+def test_application_state_machine_via_api(client):
+    """#7：创建投递 → 状态机流转 + 事件溯源；非法转换 422。"""
+    profile = client.post("/api/profiles", json={"resume_json": SAMPLE_RESUME}).json()
+    job = client.post(
+        "/api/jobs", json={"title": "后端开发", "location": "北京", "source": "manual"}
+    ).json()
+
+    app_r = client.post(
+        "/api/applications",
+        json={"profile_id": profile["id"], "job_id": job["id"], "status": "discovered"},
+    )
+    assert app_r.status_code == 201
+    app_id = app_r.json()["id"]
+    assert len(app_r.json()["events"]) == 1
+
+    # 合法流转：待投递 → 已投递
+    r = client.patch(f"/api/applications/{app_id}/status", json={"to_status": "to_submit"})
+    assert r.status_code == 200
+    r = client.patch(f"/api/applications/{app_id}/status", json={"to_status": "submitted"})
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "submitted"
+    assert len(data["events"]) == 3  # 创建 + 2 次转换
+
+    # 非法流转：已投递直接 → Offer（跳级）
+    bad = client.patch(f"/api/applications/{app_id}/status", json={"to_status": "offer"})
+    assert bad.status_code == 422
+
+    # 终态冻结
+    client.patch(f"/api/applications/{app_id}/status", json={"to_status": "rejected"})
+    frozen = client.patch(f"/api/applications/{app_id}/status", json={"to_status": "submitted"})
+    assert frozen.status_code == 422
+
+
+def test_resume_version_fork(client):
+    """#6：母版 → 岗位定制副本（不覆盖母版）。"""
+    profile = client.post("/api/profiles", json={"resume_json": SAMPLE_RESUME}).json()
+    job = client.post(
+        "/api/jobs", json={"title": "RAG 工程师", "location": "广州", "source": "manual"}
+    ).json()
+
+    master = client.post(
+        "/api/resume-versions",
+        json={
+            "profile_id": profile["id"],
+            "name": "母版",
+            "content": "<div>简历内容</div>",
+            "template_id": "tech",
+            "style": "blue",
+        },
+    ).json()
+    fork = client.post(
+        f"/api/resume-versions/{master['id']}/fork",
+        params={"job_id": job["id"], "name": "RAG 工程师-定向版"},
+    )
+    assert fork.status_code == 201
+    data = fork.json()
+    assert data["parent_id"] == master["id"]
+    assert data["content"] == "<div>简历内容</div>"
+    assert data["job_id"] == job["id"]
+
+    master_after = client.get(f"/api/resume-versions/{master['id']}").json()
+    assert master_after["content"] == "<div>简历内容</div>"  # 母版未被修改

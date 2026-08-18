@@ -31,7 +31,7 @@
 - [x] **Day 1 仓库卫生**：新建 career-kit 仓库基线；legacy 迁入；.gitignore/LICENSE/README；清理个人路径与中文产物名
 - [x] **Day 2 统一工程**：apps/services/packages 目录与说明；根级统一 build/test 命令（`npm run build` / `npm run test`）；CI 接入统一命令
 - [x] **Day 3 Schema**（#2）：Profile/Experience/Skill/Preference/Company/Job/JobSnapshot/MatchReport/ResumeVersion/Application/ApplicationEvent/InterviewPlan 共 12 实体 SQLAlchemy 模型 + Pydantic schemas + Application 状态机 + Alembic 骨架；pytest 19 项全过（SQLite 内存库）
-- [ ] **Day 4 后端骨架**：FastAPI 健康检查；Profile/Job/Application CRUD；Docker Compose 起 PostgreSQL
+- [x] **Day 4 后端骨架**（#3/#4/#5/#6/#7）：FastAPI 健康检查 + Profile/Job/Application/Match/ResumeVersion CRUD；Resume Kit JSON 导入（importer）；规则匹配（matcher：硬条件+关键词+证据）；投递状态机+事件；Docker Compose PostgreSQL；API 集成测试 24 项全过
 - [ ] **Day 5 前端骨架**：统一导航、个人中心空态、岗位列表、投递看板；接通真实 API
 - [ ] **Day 6 迁移与测试**：resume JSON 导入；Schema/迁移/状态流转单测；匿名样例数据
 - [ ] **Day 7 验收与复盘**：干净环境按 README 启动；2 分钟演示；问题清单

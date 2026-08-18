@@ -36,5 +36,18 @@ services/api/
 ```bash
 pip install -e ".[dev]"     # 安装依赖
 python -m pytest            # 跑测试（SQLite，无需数据库）
-alembic upgrade head        # 迁移（需 PostgreSQL，Day 4 起）
+docker compose up -d        # 仓库根目录：启动 PostgreSQL
+alembic upgrade head        # 迁移（需 PostgreSQL）
+uvicorn app.main:app --reload  # 启动 API（http://127.0.0.1:8000/api/health）
 ```
+
+## API 端点（MVP）
+
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| GET | `/api/health` | 健康检查 |
+| POST/GET/PATCH | `/api/profiles`、`/api/profiles/{id}` | 画像 CRUD；POST 携带 `resume_json` 即触发 **Resume Kit JSON 导入**（#3） |
+| POST/GET/PATCH | `/api/jobs`、`/api/jobs/{id}` | 岗位录入（JD 文本/URL）与 CRUD（#4） |
+| POST | `/api/matches/analyze?profile_id=&job_id=` | 规则匹配（硬条件+关键词）输出可解释报告（#5） |
+| POST/GET | `/api/resume-versions`、`/{id}/fork` | 简历版本与岗位定制副本（#6） |
+| POST/GET/PATCH | `/api/applications`、`/{id}/status` | 投递看板：状态机校验 + 事件溯源（#7） |
