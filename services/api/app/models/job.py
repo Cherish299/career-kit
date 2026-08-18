@@ -1,0 +1,66 @@
+"""岗位雷达：Company / Job / JobSnapshot。"""
+from __future__ import annotations
+
+import uuid
+from datetime import datetime, timezone
+
+from sqlalchemy import DateTime, ForeignKey, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db.base import Base
+from app.models.profile import JSONType
+
+
+def _uuid() -> str:
+    return str(uuid.uuid4())
+
+
+def _now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+class Company(Base):
+    __tablename__ = "companies"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    name: Mapped[str] = mapped_column(String(300), unique=True, index=True)
+    aliases: Mapped[list] = mapped_column(JSONType, default=list)
+    career_site: Mapped[str] = mapped_column(String(500), default="")
+    industry: Mapped[str] = mapped_column(String(100), default="")
+
+    jobs: Mapped[list[Job]] = relationship(back_populates="company")
+
+
+class Job(Base):
+    __tablename__ = "jobs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    company_id: Mapped[str | None] = mapped_column(
+        ForeignKey("companies.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    title: Mapped[str] = mapped_column(String(300), default="")
+    location: Mapped[str] = mapped_column(String(200), default="")
+    requirements: Mapped[str] = mapped_column(Text, default="")
+    description: Mapped[str] = mapped_column(Text, default="")
+    source_url: Mapped[str] = mapped_column(String(1000), default="")
+    # 来源：manual（粘贴 JD）/ url（链接录入）/ crawler（官网采集）
+    source: Mapped[str] = mapped_column(String(20), default="manual", index=True)
+    external_id: Mapped[str] = mapped_column(String(200), default="")
+    status: Mapped[str] = mapped_column(String(20), default="active", index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, onupdate=_now)
+
+    company: Mapped[Company | None] = relationship(back_populates="jobs")
+    snapshots: Mapped[list[JobSnapshot]] = relationship(back_populates="job", cascade="all, delete-orphan")
+
+
+class JobSnapshot(Base):
+    __tablename__ = "job_snapshots"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    job_id: Mapped[str] = mapped_column(ForeignKey("jobs.id", ondelete="CASCADE"), index=True)
+    content_hash: Mapped[str] = mapped_column(String(64), index=True)
+    raw_content: Mapped[str] = mapped_column(Text, default="")
+    captured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+    job: Mapped[Job] = relationship(back_populates="snapshots")

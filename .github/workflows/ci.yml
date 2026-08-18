@@ -38,3 +38,21 @@ jobs:
             echo "::error::personal absolute path found in repository"; exit 1
           fi
           echo "secret & path scan passed"
+
+  api-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -e "services/api[dev]"
+
+      - name: Run API schema & state machine tests
+        run: python -m pytest
+        working-directory: services/api
