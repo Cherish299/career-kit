@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerOS · 个人求职工作台</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">CareerOS <span class="tag">个人求职操作系统</span></div>
+  <nav id="tabs" class="tabs">
+    <button data-tab="profile" class="tab active">👤 个人中心</button>
+    <button data-tab="jobs" class="tab">📡 岗位</button>
+    <button data-tab="match" class="tab">🎯 匹配</button>
+    <button data-tab="pipeline" class="tab">📨 投递看板</button>
+    <button data-tab="resume" class="tab">📄 简历版本</button>
+  </nav>
+</header>
+<main>
+  <section id="panel-profile" class="panel active">
+    <div class="card">
+      <h2>导入 Resume Kit 画像</h2>
+      <p class="hint">粘贴简历工作台导出的 JSON（或选文件），一键结构化到 Profile。</p>
+      <textarea id="importText" rows="8" placeholder='{"app":"resume-kit","resume":{"basic":{...}}}'></textarea>
+      <div class="row">
+        <input type="file" id="importFile" accept=".json">
+        <button id="btnImport" class="btn primary">导入画像</button>
+      </div>
+      <div id="importResult" class="result"></div>
+    </div>
+    <div class="card">
+      <h2>当前画像</h2>
+      <div id="profileList"></div>
+    </div>
+  </section>
+
+  <section id="panel-jobs" class="panel">
+    <div class="card">
+      <h2>录入岗位</h2>
+      <div class="grid">
+        <label>公司 <input id="jCompany" placeholder="示例科技公司"></label>
+        <label>职位 <input id="jTitle" placeholder="AI 应用开发工程师"></label>
+        <label>地点 <input id="jLocation" placeholder="深圳"></label>
+        <label>来源 URL（可选）<input id="jUrl" placeholder="https://..."></label>
+      </div>
+      <label>JD 要求 <textarea id="jReq" rows="4" placeholder="熟悉 Python / FastAPI / RAG ..."></textarea></label>
+      <button id="btnAddJob" class="btn primary">保存岗位</button>
+      <div id="jobResult" class="result"></div>
+    </div>
+    <div class="card">
+      <h2>岗位列表</h2>
+      <div id="jobList"></div>
+    </div>
+  </section>
+
+  <section id="panel-match" class="panel">
+    <div class="card">
+      <h2>可解释匹配</h2>
+      <div class="row">
+        <select id="mProfile"></select>
+        <select id="mJob"></select>
+        <button id="btnMatch" class="btn primary">分析匹配</button>
+      </div>
+      <div id="matchResult"></div>
+    </div>
+  </section>
+
+  <section id="panel-pipeline" class="panel">
+    <div class="card">
+      <h2>创建投递</h2>
+      <div class="row">
+        <select id="pProfile"></select>
+        <select id="pJob"></select>
+        <button id="btnAddApp" class="btn primary">创建投递</button>
+      </div>
+      <div id="appResult" class="result"></div>
+    </div>
+    <div class="card">
+      <h2>投递看板</h2>
+      <div id="pipelineList"></div>
+    </div>
+  </section>
+
+  <section id="panel-resume" class="panel">
+    <div class="card">
+      <h2>简历版本（母版 → 岗位副本）</h2>
+      <div class="row">
+        <select id="rProfile"></select>
+        <select id="rJob"></select>
+        <input id="rName" placeholder="版本名（如：RAG 岗-定向版）">
+        <button id="btnFork" class="btn primary">生成副本</button>
+      </div>
+      <div id="resumeResult" class="result"></div>
+    </div>
+    <div class="card">
+      <h2>版本列表</h2>
+      <div id="resumeList"></div>
+    </div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,10 +1,16 @@
 """测试共用 fixture：SQLite 内存库（不依赖 PostgreSQL）。"""
-import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
+import os
 
-from app.db.base import Base
+# 必须在 import app.* 之前设置：全局 engine（lifespan create_all）走 SQLite 内存库
+os.environ.setdefault("CAREER_DATABASE_URL", "sqlite://")
+
+import pytest  # noqa: E402
+from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy.orm import sessionmaker  # noqa: E402
+from sqlalchemy.pool import StaticPool  # noqa: E402
+
+import app.models  # noqa: E402,F401  # 注册全部模型到 Base.metadata
+from app.db.base import Base  # noqa: E402
 
 
 @pytest.fixture()

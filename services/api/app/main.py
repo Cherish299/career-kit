@@ -1,14 +1,30 @@
-"""FastAPI 应用入口：健康检查 + 路由注册。"""
+"""FastAPI 应用入口：健康检查 + 路由注册 + 前端静态服务。"""
+from contextlib import asynccontextmanager
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routers import application, job, match, profile, resume
 from app.core.config import settings
+import app.models  # noqa: F401  # 注册全部模型到 Base.metadata
+from app.db.base import Base
+from app.db.session import engine
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # 开发期自动建表；生产环境使用 alembic upgrade head（见 alembic/）
+    Base.metadata.create_all(bind=engine)
+    yield
+
 
 app = FastAPI(
     title="CareerOS API",
     description="个人求职操作系统后端：画像 / 岗位 / 匹配 / 简历版本 / 投递",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -30,3 +46,8 @@ app.include_router(job.router, prefix="/api/jobs", tags=["job"])
 app.include_router(match.router, prefix="/api/matches", tags=["match"])
 app.include_router(resume.router, prefix="/api/resume-versions", tags=["resume"])
 app.include_router(application.router, prefix="/api/applications", tags=["application"])
+
+# 前端静态文件（apps/web）：uvicorn app.main:app 后浏览器打开 http://127.0.0.1:8000
+_web_dir = Path(__file__).resolve().parents[3] / "apps" / "web"
+if _web_dir.is_dir():
+    app.mount("/", StaticFiles(directory=_web_dir, html=True), name="web")

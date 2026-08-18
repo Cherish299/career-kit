@@ -1,23 +1,10 @@
-"""SQLAlchemy 声明基类与模型汇总（Alembic 与 create_all 共用）。"""
+"""SQLAlchemy 声明基类。
+
+模型注册：`Base.metadata` 需要模型模块被导入才会收集表结构。
+入口处（app.main / alembic env.py / 测试 conftest）显式 `import app.models` 触发。
+"""
 from sqlalchemy.orm import DeclarativeBase
 
 
 class Base(DeclarativeBase):
     pass
-
-
-# 导入全部模型，确保元数据完整（Alembic autogenerate / create_all 依赖）
-from app.models import (  # noqa: E402,F401
-    Application,
-    ApplicationEvent,
-    Company,
-    Experience,
-    InterviewPlan,
-    Job,
-    JobSnapshot,
-    MatchReport,
-    Preference,
-    Profile,
-    ResumeVersion,
-    Skill,
-)

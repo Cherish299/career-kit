@@ -5,6 +5,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.core.config import settings
+import app.models  # noqa: F401  # 注册全部模型到 Base.metadata
 from app.db.base import Base
 
 config = context.config
