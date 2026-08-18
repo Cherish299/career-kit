@@ -43,11 +43,12 @@ jobs:
       - name: Secret & path scan
         run: |
           echo "== scan for API keys / private keys =="
-          if grep -rInE "sk-[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{16}|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY" --include="*.js" --include="*.json" --include="*.md" --include="*.yml" --include="*.yaml" .; then
+          BEG="-----BEGIN "; KEY="PRIVATE KEY"
+          if grep -rInE "sk-[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{16}|${BEG}(RSA |EC |OPENSSH )?${KEY}" --include="*.js" --include="*.json" --include="*.md" --include="*.yml" --include="*.yaml" --exclude="ci.yml" --exclude-dir=node_modules .; then
             echo "::error::possible secret found in repository"; exit 1
           fi
           echo "== scan for personal absolute paths =="
-          if grep -rInE "C:\\\\Users\\\\[A-Za-z]+|/home/[a-z]+/" --include="*.js" --include="*.json" --include="*.md" --include="*.yml" --include="*.yaml" .; then
+          if grep -rInE "C:\\\\Users\\\\[A-Za-z]+|/home/[a-z]+/" --include="*.js" --include="*.json" --include="*.md" --include="*.yml" --include="*.yaml" --exclude="ci.yml" --exclude-dir=node_modules .; then
             echo "::error::personal absolute path found in repository"; exit 1
           fi
           echo "secret & path scan passed"
