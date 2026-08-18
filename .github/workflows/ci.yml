@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build resume-kit (legacy)
+        run: node scripts/build.js
+        working-directory: legacy/resume-kit
+
+      - name: Run resume engine tests
+        run: node scripts/test-engine.js
+        working-directory: legacy/resume-kit
+
+      - name: Build interview-kit (legacy)
+        run: node scripts/build.js
+        working-directory: legacy/interview-kit
+
+      - name: Run question bank validation
+        run: node scripts/test-data.js
+        working-directory: legacy/interview-kit
+
+      - name: Smoke tests (jsdom)
+        run: |
+          npm ci --prefix scripts/smoke
+          node scripts/smoke/smoke-dom.mjs
+        working-directory: legacy/resume-kit
+
+      - name: Secret & path scan
+        run: |
+          echo "== scan for API keys / private keys =="
+          if grep -rInE "sk-[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{16}|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY" --include="*.js" --include="*.json" --include="*.md" --include="*.yml" --include="*.yaml" .; then
+            echo "::error::possible secret found in repository"; exit 1
+          fi
+          echo "== scan for personal absolute paths =="
+          if grep -rInE "C:\\\\Users\\\\[A-Za-z]+|/home/[a-z]+/" --include="*.js" --include="*.json" --include="*.md" --include="*.yml" --include="*.yaml" .; then
+            echo "::error::personal absolute path found in repository"; exit 1
+          fi
+          echo "secret & path scan passed"

@@ -137,7 +137,7 @@ assert($("#previewBody .page").classList.contains("business"), "切换简历风�
 
 /* ---------- 板块管理 ---------- */
 console.log("[7] 板块管理（顺序 / 显示隐藏）");
-assert($$(".sec-mgr-row").length === 9, "板块管理 9 行（实际 " + $$(".sec-mgr-row").length + "）");
+assert($$(".sec-mgr-row").length === 10, "板块管理 10 行（实际 " + $$(".sec-mgr-row").length + "）");
 /* 隐藏求职意向 */
 $('[data-sec-toggle="target"]').click();
 await new Promise((r) => setTimeout(r, 200));
