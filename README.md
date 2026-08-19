@@ -30,12 +30,21 @@ npm run test      # 规则引擎单测 + 题库校验 + DOM 冒烟
 
 ## 快速开始（MVP 工作台：后端 + 前端一体）
 
-```bash
+推荐在 Windows PowerShell 中使用 Python 模块方式启动，避免 `uvicorn` 命令未加入 PATH：
+
+```powershell
 cd services/api
-pip install -e ".[dev]"            # 安装依赖
-python -m pytest                    # 跑测试（SQLite，无需数据库，24 项）
-uvicorn app.main:app --reload       # 启动（默认连 PostgreSQL；无 PG 时：
-CAREER_DATABASE_URL=sqlite:///./dev.db uvicorn app.main:app --reload
+python -m pip install -e ".[dev]"
+$env:CAREER_DATABASE_URL="sqlite:///./dev.db"
+python -m pytest
+python -m uvicorn app.main:app --reload
+```
+
+也可以从仓库根目录启动：
+
+```powershell
+$env:CAREER_DATABASE_URL="sqlite:///./services/api/dev.db"
+npm run dev
 ```
 
 浏览器打开 <http://127.0.0.1:8000>，用 `examples/sample-resume.json` 导入画像、`examples/sample-jobs.json` 录入岗位，即可体验完整闭环：**画像 → 岗位 → 匹配报告 → 投递看板 → 简历副本**。

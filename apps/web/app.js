@@ -36,7 +36,7 @@ async function fillSelect(id, rows, labelFn) {
 async function refreshDropdowns() {
   const [profiles, jobs] = await Promise.all([api("/profiles"), api("/jobs")]);
   fillSelect("mProfile", profiles, (p) => p.display_name || p.id.slice(0, 8));
-  fillSelect("mJob", jobs, (j) => `${j.title || "未命名岗位"} @ ${j.company_id || "无公司"}`);
+  fillSelect("mJob", jobs, (j) => `${j.title || "未命名岗位"} @ ${j.company_name || "无公司"}`);
   fillSelect("pProfile", profiles, (p) => p.display_name || p.id.slice(0, 8));
   fillSelect("pJob", jobs, (j) => j.title || j.id.slice(0, 8));
   fillSelect("rProfile", profiles, (p) => p.display_name || p.id.slice(0, 8));
@@ -100,7 +100,7 @@ async function addJob() {
 async function renderJobs() {
   const jobs = await api("/jobs");
   el("jobList").innerHTML = jobs.length
-    ? jobs.map((j) => `<div class="list-item"><b>${esc(j.title)}</b> <span class="muted">${esc(j.location)} · ${esc(j.source)}</span></div>`).join("")
+    ? jobs.map((j) => `<div class="list-item"><b>${esc(j.title)}</b> <span class="muted">${esc(j.company_name || "无公司")} · ${esc(j.location)} · ${esc(j.source)}</span></div>`).join("")
     : '<div class="muted">暂无岗位，先录入 JD。</div>';
 }
 

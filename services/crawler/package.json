@@ -1,0 +1,8 @@
+{
+  "name": "@career-kit/crawler",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/adapter.test.mjs"
+  }
+}

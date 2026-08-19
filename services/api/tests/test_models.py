@@ -1,4 +1,7 @@
 """ORM 模型测试：建表、创建、关系、级联。"""
+import pytest
+from sqlalchemy.exc import IntegrityError
+
 from app.models import (
     Application,
     ApplicationEvent,
@@ -87,3 +90,26 @@ def test_profile_delete_cascades_experiences(db_session):
     assert db_session.get(Profile, pid) is None
     # 级联删除经历
     assert db_session.query(Experience).filter_by(profile_id=pid).count() == 0
+
+
+def test_job_snapshot_unique_per_job_content_hash(db_session):
+    company = Company(name="快照公司")
+    job = Job(title="爬虫工程师", company=company, source="crawler")
+    db_session.add_all([company, job])
+    db_session.commit()
+
+    from app.models import JobSnapshot
+
+    s1 = JobSnapshot(job_id=job.id, content_hash="abc123", raw_content="first")
+    s2 = JobSnapshot(job_id=job.id, content_hash="abc123", raw_content="duplicate")
+    db_session.add_all([s1, s2])
+    with pytest.raises(IntegrityError):
+        db_session.commit()
+
+
+def test_job_source_and_external_id_must_be_unique(db_session):
+    j1 = Job(title="算法工程师", source="crawler", external_id="job-001")
+    j2 = Job(title="算法工程师-重复", source="crawler", external_id="job-001")
+    db_session.add_all([j1, j2])
+    with pytest.raises(IntegrityError):
+        db_session.commit()

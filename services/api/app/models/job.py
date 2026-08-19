@@ -4,7 +4,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, ForeignKey, String, Text
+from sqlalchemy import DateTime, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -33,6 +33,7 @@ class Company(Base):
 
 class Job(Base):
     __tablename__ = "jobs"
+    __table_args__ = (UniqueConstraint("source", "external_id", name="uq_job_source_external_id"),)
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     company_id: Mapped[str | None] = mapped_column(
@@ -53,9 +54,14 @@ class Job(Base):
     company: Mapped[Company | None] = relationship(back_populates="jobs")
     snapshots: Mapped[list[JobSnapshot]] = relationship(back_populates="job", cascade="all, delete-orphan")
 
+    @property
+    def company_name(self) -> str:
+        return self.company.name if self.company else ""
+
 
 class JobSnapshot(Base):
     __tablename__ = "job_snapshots"
+    __table_args__ = (UniqueConstraint("job_id", "content_hash", name="uq_job_snapshot_content"),)
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     job_id: Mapped[str] = mapped_column(ForeignKey("jobs.id", ondelete="CASCADE"), index=True)

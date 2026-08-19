@@ -17,6 +17,7 @@ from app.schemas.job import (
     CompanyRead,
     JobCreate,
     JobRead,
+    JobSnapshotCreate,
     JobSnapshotRead,
     JobUpdate,
 )
@@ -45,6 +46,7 @@ __all__ = [
     "InterviewPlanRead",
     "JobCreate",
     "JobRead",
+    "JobSnapshotCreate",
     "JobSnapshotRead",
     "JobUpdate",
     "MatchReportCreate",

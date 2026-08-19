@@ -52,6 +52,7 @@ class JobRead(JobBase):
     model_config = ConfigDict(from_attributes=True)
     id: str
     company_id: str | None = None
+    company_name: str = ""
     created_at: datetime
     updated_at: datetime
 
@@ -62,3 +63,7 @@ class JobSnapshotRead(BaseModel):
     job_id: str
     content_hash: str
     captured_at: datetime
+
+
+class JobSnapshotCreate(BaseModel):
+    raw_content: str

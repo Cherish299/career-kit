@@ -133,6 +133,7 @@ def test_job_and_match_flow(client):
     assert r.status_code == 201, r.text
     job = r.json()
     assert job["company_id"] is not None
+    assert job["company_name"] == "示例科技公司"
 
     mr = client.post("/api/matches/analyze", params={"profile_id": profile["id"], "job_id": job["id"]})
     assert mr.status_code == 200, mr.text
@@ -175,6 +176,72 @@ def test_application_state_machine_via_api(client):
     client.patch(f"/api/applications/{app_id}/status", json={"to_status": "rejected"})
     frozen = client.patch(f"/api/applications/{app_id}/status", json={"to_status": "submitted"})
     assert frozen.status_code == 422
+
+
+def test_job_snapshots_are_created_and_deduplicated(client):
+    job = client.post(
+        "/api/jobs",
+        json={
+            "title": "Python 爬虫工程师",
+            "location": "深圳",
+            "source": "crawler",
+            "company_name": "快照科技",
+            "description": "负责官网岗位采集与结构化解析",
+        },
+    ).json()
+
+    snapshots = client.get(f"/api/jobs/{job['id']}/snapshots")
+    assert snapshots.status_code == 200
+    rows = snapshots.json()
+    assert len(rows) == 1
+    assert rows[0]["content_hash"]
+
+    same = client.post(f"/api/jobs/{job['id']}/snapshots", json={"raw_content": "负责官网岗位采集与结构化解析"})
+    assert same.status_code == 201
+    assert same.json()["id"] == rows[0]["id"]
+
+    changed = client.post(f"/api/jobs/{job['id']}/snapshots", json={"raw_content": "负责官网岗位采集、去重与结构化解析"})
+    assert changed.status_code == 201
+    assert changed.json()["id"] != rows[0]["id"]
+
+    rows_after = client.get(f"/api/jobs/{job['id']}/snapshots").json()
+    assert len(rows_after) == 2
+
+
+def test_job_create_reuses_same_source_and_external_id(client):
+    payload = {
+        "title": "后端开发工程师",
+        "location": "深圳",
+        "source": "crawler",
+        "external_id": "job-001",
+        "company_name": "复用科技",
+        "description": "负责职位解析与岗位入库",
+        "source_url": "https://example.com/jobs/001",
+    }
+    created = client.post("/api/jobs", json=payload)
+    assert created.status_code == 201
+    first = created.json()
+
+    updated = client.post(
+        "/api/jobs",
+        json={
+            **payload,
+            "title": "资深后端开发工程师",
+            "description": "负责职位解析、去重与岗位入库",
+        },
+    )
+    assert updated.status_code == 201
+    second = updated.json()
+    assert second["id"] == first["id"]
+    assert second["title"] == "资深后端开发工程师"
+    assert second["company_name"] == "复用科技"
+
+    jobs = client.get("/api/jobs").json()
+    same_jobs = [j for j in jobs if j["source"] == "crawler" and j["external_id"] == "job-001"]
+    assert len(same_jobs) == 1
+
+    snapshots = client.get(f"/api/jobs/{first['id']}/snapshots").json()
+    assert len(snapshots) == 2
 
 
 def test_resume_version_fork(client):

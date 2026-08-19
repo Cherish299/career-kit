@@ -1,0 +1,24 @@
+{
+  "source": "sample-board",
+  "generated_at": "2026-08-19T00:00:00Z",
+  "jobs": [
+    {
+      "id": "job-001",
+      "url": "https://example.com/jobs/001",
+      "title": "AI 应用开发工程师",
+      "company": "示例科技公司",
+      "location": "深圳",
+      "description": "负责大模型应用开发、岗位解析与工作流编排。",
+      "requirements": "熟悉 Python、FastAPI、RAG、SQL。"
+    },
+    {
+      "id": "job-002",
+      "url": "https://example.com/jobs/002",
+      "title": "爬虫工程师",
+      "company": "示例科技公司",
+      "location": "广州",
+      "description": "负责官网采集、结构化解析与快照监控。",
+      "requirements": "熟悉 HTTP、HTML 解析、去重与测试。"
+    }
+  ]
+}

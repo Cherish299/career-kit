@@ -1,0 +1,16 @@
+{
+  "source": "offerqingbaoju-info-summary",
+  "fixture_note": "匿名字段映射样例；不代表真实页面结构，禁止据此联网抓取。",
+  "records": [
+    {
+      "record_id": "demo-company-001",
+      "company_name": "匿名科技公司",
+      "position_name": "AI 应用开发工程师",
+      "city": "深圳",
+      "job_url": "https://offerqingbaoju.cn/info-summary",
+      "summary": "参与大模型应用、RAG 服务和内部工具开发。",
+      "requirements": ["Python", "FastAPI", "RAG"],
+      "source_label": "信息汇总样例"
+    }
+  ]
+}
