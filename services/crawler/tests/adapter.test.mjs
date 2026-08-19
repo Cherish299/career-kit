@@ -4,8 +4,10 @@ import assert from "node:assert/strict";
 import { normalizeJobRecord } from "../src/adapter.js";
 import { SampleSourceAdapter } from "../src/sample-adapter.js";
 import { OfferQingBaoJuAdapter } from "../src/offerqingbaoju-adapter.js";
+import { applyRecordFilters } from "../src/filter-records.js";
 import { filterJobs, getKeywordConfig } from "../src/filter-jobs.js";
 import { importJobs } from "../src/import-jobs.js";
+import { fetchNavigations, resolveNavigationIdsByName } from "../src/navigation-index.js";
 import { getSelectConfig, selectJobs } from "../src/select-jobs.js";
 
 test("normalizeJobRecord returns job payload for API", () => {
@@ -154,22 +156,51 @@ test("selectJobs supports title company and navigation filters together", () => 
   assert.equal(selected[0].title, "AI工程师");
 });
 
+test("resolveNavigationIdsByName matches navigation names to ids", async () => {
+  const rows = [
+    { id: "60", name: "信息总表", file_count: 1, updated_at: "" },
+    { id: "65", name: "校招实习内推合集", file_count: 1, updated_at: "" },
+  ];
+  assert.deepEqual(resolveNavigationIdsByName(rows, ["信息总表", "实习"]), ["60", "65"]);
+});
+
+test("applyRecordFilters supports location graduate year and batch", () => {
+  const records = [
+    { 工作地点: "杭州,深圳", 毕业年份: "2027", 招聘批次: "秋招" },
+    { 工作地点: "北京", 毕业年份: "2026", 招聘批次: "实习" },
+  ];
+  const config = getSelectConfig({
+    OFFER_LOCATION_KEYWORDS: "杭州,深圳",
+    OFFER_GRADUATE_YEARS: "2027",
+    OFFER_BATCH_KEYWORDS: "秋招",
+  });
+  const filtered = applyRecordFilters(records, config);
+  assert.equal(filtered.length, 1);
+  assert.equal(filtered[0]["毕业年份"], "2027");
+});
+
 test("importJobs defaults to dry-run and writes only with explicit opt-in", async () => {
   const row = { source: "offerqingbaoju-info-summary", external_id: "60:1:1", title: "样例岗位" };
   const dryRun = await importJobs([row], { fetchImpl: async () => { throw new Error("must not call API"); } });
   assert.equal(dryRun.written, false);
   assert.equal(dryRun.skipped, 1);
+  assert.equal(dryRun.summary.ok, 0);
+  assert.equal(dryRun.summary.skipped, 1);
 
   const calls = [];
   const written = await importJobs([row], {
     write: true,
     apiBase: "http://test-server",
+    readExisting: async () => [{ external_id: "60:1:1" }],
     fetchImpl: async (url, options) => {
       calls.push({ url, options });
       return { ok: true, async json() { return { id: "job-1" }; } };
     },
   });
   assert.equal(written.imported, 1);
+  assert.equal(written.summary.ok, 1);
+  assert.equal(written.summary.reused, 1);
+  assert.equal(written.results[0].action, "reused");
   assert.equal(calls[0].options.method, "POST");
   assert.equal(calls[0].url, "http://test-server/api/jobs");
 });

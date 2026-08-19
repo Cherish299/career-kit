@@ -4,6 +4,10 @@ export function getSelectConfig(env = process.env) {
     anyKeywords: splitList(env.OFFER_JOB_KEYWORDS),
     companyKeywords: splitList(env.OFFER_COMPANY_KEYWORDS),
     navigationIds: splitList(env.OFFER_NAVIGATION_IDS),
+    navigationNames: splitList(env.OFFER_NAVIGATION_NAMES),
+    locationKeywords: splitList(env.OFFER_LOCATION_KEYWORDS),
+    graduateYears: splitList(env.OFFER_GRADUATE_YEARS),
+    batchKeywords: splitList(env.OFFER_BATCH_KEYWORDS),
   };
 }
 

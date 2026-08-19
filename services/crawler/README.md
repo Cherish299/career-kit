@@ -21,16 +21,20 @@ CareerOS 的岗位采集服务（计划第 5 周起搭建，P1）。
 - `scripts/preview-offerqingbaoju.mjs`：只读预览脚本，不写数据库
 - `scripts/import-offerqingbaoju.mjs`：显式导入脚本，默认 dry-run，只有 `--write` 才调用 Job API
 
-> 真实 API 预览默认最多读取 5 条，可用 `OFFER_PREVIEW_LIMIT=1..20` 调整。导入默认也是 dry-run；可通过 `OFFER_JOB_KEYWORDS` 做全文关键词筛选，并额外使用 `OFFER_TITLE_KEYWORDS`、`OFFER_COMPANY_KEYWORDS`、`OFFER_NAVIGATION_IDS` 做更精细的标题/公司/导航筛选。正式批量同步前仍需确认公开接口、robots.txt、使用条款和数据再利用边界。
+> 真实 API 预览默认最多读取 5 条，可用 `OFFER_PREVIEW_LIMIT=1..20` 调整。导入默认也是 dry-run；可通过 `OFFER_JOB_KEYWORDS` 做全文关键词筛选，并额外使用 `OFFER_TITLE_KEYWORDS`、`OFFER_COMPANY_KEYWORDS`、`OFFER_NAVIGATION_IDS`、`OFFER_NAVIGATION_NAMES`、`OFFER_LOCATION_KEYWORDS`、`OFFER_GRADUATE_YEARS`、`OFFER_BATCH_KEYWORDS` 做更精细的标题/公司/导航/地点/毕业年份/批次筛选。导入结果会输出 `summary` 汇总，并在写入时区分 `created` 和 `reused`。正式批量同步前仍需确认公开接口、robots.txt、使用条款和数据再利用边界。
 
 只读预览：
 
 ```bash
 cd services/crawler
 $env:OFFER_PREVIEW_LIMIT="20"
+$env:OFFER_NAVIGATION_NAMES="信息总表,实习"
 $env:OFFER_TITLE_KEYWORDS="AI,算法,机器学习,后端"
 $env:OFFER_JOB_KEYWORDS="大模型,RAG,Python,数据,Agent"
 $env:OFFER_COMPANY_KEYWORDS="乐狗,华为,百度,腾讯,阿里"
+$env:OFFER_LOCATION_KEYWORDS="杭州,深圳,全国"
+$env:OFFER_GRADUATE_YEARS="2027,2028"
+$env:OFFER_BATCH_KEYWORDS="秋招,实习"
 npm run preview:offer
 ```
 
@@ -38,9 +42,13 @@ npm run preview:offer
 
 ```bash
 $env:OFFER_IMPORT_LIMIT="20"
+$env:OFFER_NAVIGATION_NAMES="信息总表,实习"
 $env:OFFER_TITLE_KEYWORDS="AI,算法,机器学习,后端"
 $env:OFFER_JOB_KEYWORDS="大模型,RAG,Python,数据,Agent"
 $env:OFFER_COMPANY_KEYWORDS="乐狗,华为,百度,腾讯,阿里"
+$env:OFFER_LOCATION_KEYWORDS="杭州,深圳,全国"
+$env:OFFER_GRADUATE_YEARS="2027,2028"
+$env:OFFER_BATCH_KEYWORDS="秋招,实习"
 npm run import:offer
 ```
 
