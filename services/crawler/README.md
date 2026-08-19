@@ -14,12 +14,41 @@ CareerOS 的岗位采集服务（计划第 5 周起搭建，P1）。
 
 - `src/adapter.js`：统一 Adapter 基类与 Job 归一化工具
 - `src/sample-adapter.js`：基于本地 fixture 的示例来源实现
-- `src/offerqingbaoju-adapter.js`：Offer 情报局信息汇总的字段映射草稿，仅读取匿名 fixture
+- `src/offerqingbaoju-adapter.js`：Offer 情报局公开 API adapter，支持限量分页读取；测试默认使用 fixture/mock，不联网
 - `src/fixtures/sample-source.json`：样例来源数据
 - `src/fixtures/offerqingbaoju-info-summary.json`：匿名字段映射样例，不代表真实页面结构
 - `tests/adapter.test.mjs`：discover / fetch / parse / normalize / healthCheck 回归测试
+- `scripts/preview-offerqingbaoju.mjs`：只读预览脚本，不写数据库
+- `scripts/import-offerqingbaoju.mjs`：显式导入脚本，默认 dry-run，只有 `--write` 才调用 Job API
 
-> 当前 Offer 情报局 adapter 不联网、不请求真实页面，也不代表已经获得站点授权；后续正式接入前仍需确认公开接口、robots.txt、使用条款和数据再利用边界。
+> 真实 API 预览默认最多读取 5 条，可用 `OFFER_PREVIEW_LIMIT=1..20` 调整。导入默认也是 dry-run；可通过 `OFFER_JOB_KEYWORDS` 做全文关键词筛选，并额外使用 `OFFER_TITLE_KEYWORDS`、`OFFER_COMPANY_KEYWORDS`、`OFFER_NAVIGATION_IDS` 做更精细的标题/公司/导航筛选。正式批量同步前仍需确认公开接口、robots.txt、使用条款和数据再利用边界。
+
+只读预览：
+
+```bash
+cd services/crawler
+$env:OFFER_PREVIEW_LIMIT="20"
+$env:OFFER_TITLE_KEYWORDS="AI,算法,机器学习,后端"
+$env:OFFER_JOB_KEYWORDS="大模型,RAG,Python,数据,Agent"
+$env:OFFER_COMPANY_KEYWORDS="乐狗,华为,百度,腾讯,阿里"
+npm run preview:offer
+```
+
+导入前 dry-run：
+
+```bash
+$env:OFFER_IMPORT_LIMIT="20"
+$env:OFFER_TITLE_KEYWORDS="AI,算法,机器学习,后端"
+$env:OFFER_JOB_KEYWORDS="大模型,RAG,Python,数据,Agent"
+$env:OFFER_COMPANY_KEYWORDS="乐狗,华为,百度,腾讯,阿里"
+npm run import:offer
+```
+
+明确写入（要求 CareerOS API 已运行）：
+
+```bash
+npm run import:offer -- --write
+```
 
 运行：
 

@@ -3,14 +3,21 @@
   "fixture_note": "匿名字段映射样例；不代表真实页面结构，禁止据此联网抓取。",
   "records": [
     {
-      "record_id": "demo-company-001",
-      "company_name": "匿名科技公司",
-      "position_name": "AI 应用开发工程师",
-      "city": "深圳",
-      "job_url": "https://offerqingbaoju.cn/info-summary",
-      "summary": "参与大模型应用、RAG 服务和内部工具开发。",
-      "requirements": ["Python", "FastAPI", "RAG"],
-      "source_label": "信息汇总样例"
+      "_row_number": 1,
+      "企业名称": "匿名科技公司",
+      "企业性质": "民企",
+      "公告链接": "https://offerqingbaoju.cn/info-summary",
+      "学历要求": "本科及以上",
+      "工作地点": "深圳",
+      "开始时间": "2026-08-18",
+      "截止时间": "招满为止",
+      "投递地址": "https://example.com/apply/demo-001",
+      "招聘公告": "匿名科技公司",
+      "招聘批次": "秋招",
+      "更新时间": "2026-08-18",
+      "毕业年份": "2027",
+      "职位": "AI 应用开发工程师,RAG 工程师",
+      "行业": "软件技术"
     }
   ]
 }

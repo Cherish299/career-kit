@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/adapter.test.mjs"
+    "test": "node tests/adapter.test.mjs",
+    "preview:offer": "node scripts/preview-offerqingbaoju.mjs",
+    "import:offer": "node scripts/import-offerqingbaoju.mjs"
   }
 }
