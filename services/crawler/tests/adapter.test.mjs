@@ -10,7 +10,7 @@ import { importJobs } from "../src/import-jobs.js";
 import { buildJobReport, formatJobReportCsv, formatJobReportMarkdown } from "../src/job-report.js";
 import { fetchNavigations, resolveNavigationIdsByName } from "../src/navigation-index.js";
 import { getSelectConfig, selectJobs } from "../src/select-jobs.js";
-import { writeReport } from "../src/write-report.js";
+import { resolveReportOutput, timestampedReportPath, writeReport } from "../src/write-report.js";
 
 test("normalizeJobRecord returns job payload for API", () => {
   const row = normalizeJobRecord({
@@ -217,6 +217,12 @@ test("job report formats JSON payload and markdown output", () => {
 test("writeReport saves rendered report to file", async () => {
   const saved = await writeReport("tmp/offer-report-test.md", "# demo");
   assert.match(saved, /offer-report-test\.md$/);
+});
+
+test("report output can be auto-named with a timestamp", () => {
+  const path = timestampedReportPath({ format: "markdown", now: new Date("2026-01-02T03:04:05.000Z") });
+  assert.equal(path, "tmp/offer-report-20260102T030405Z.md");
+  assert.match(resolveReportOutput({ format: "csv", env: { OFFER_REPORT_AUTO_NAME: "1" } }), /^tmp\/offer-report-\d{8}T\d{6}Z\.csv$/);
 });
 
 test("importJobs defaults to dry-run and writes only with explicit opt-in", async () => {

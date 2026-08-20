@@ -34,3 +34,4 @@ htmlcov/
 *.pyc
 *.db
 *.sqlite3
+services/crawler/tmp/

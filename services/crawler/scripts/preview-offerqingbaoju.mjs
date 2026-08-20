@@ -4,7 +4,7 @@ import { DEFAULT_KEYWORDS } from "../src/filter-jobs.js";
 import { buildJobReport, formatJobReportCsv, formatJobReportMarkdown } from "../src/job-report.js";
 import { fetchNavigations, resolveNavigationIdsByName } from "../src/navigation-index.js";
 import { getSelectConfig, selectJobs } from "../src/select-jobs.js";
-import { writeReport } from "../src/write-report.js";
+import { resolveReportOutput, writeReport } from "../src/write-report.js";
 
 const limit = Number.parseInt(process.env.OFFER_PREVIEW_LIMIT || "5", 10);
 if (!Number.isInteger(limit) || limit < 1 || limit > 20) {
@@ -28,7 +28,8 @@ for (const ref of refs) {
 const filtered = selectJobs(rows, config);
 const report = buildJobReport({ source: adapter.meta.key, limit, selectors: config, rows: filtered });
 const reportFormat = String(process.env.OFFER_REPORT_FORMAT || "json").toLowerCase();
-const outputPath = process.argv.find((arg) => arg.startsWith("--output="))?.slice("--output=".length);
+const explicitOutputPath = process.argv.find((arg) => arg.startsWith("--output="))?.slice("--output=".length);
+const outputPath = resolveReportOutput({ explicitPath: explicitOutputPath, format: reportFormat });
 const rendered = reportFormat === "md" || reportFormat === "markdown"
   ? formatJobReportMarkdown(report)
   : reportFormat === "csv"

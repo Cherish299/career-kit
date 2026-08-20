@@ -29,6 +29,7 @@ CareerOS 的岗位采集服务（计划第 5 周起搭建，P1）。
 - 可设置 `OFFER_REPORT_FORMAT=md` 导出 Markdown 报告
 - 可设置 `OFFER_REPORT_FORMAT=csv` 导出 CSV 报告
 - 可附加 `--output=tmp/report.md`、`--output=tmp/report.json` 或 `--output=tmp/report.csv` 直接写入文件
+- 设置 `OFFER_REPORT_AUTO_NAME=1` 可按时间戳自动生成文件名，也可用 `OFFER_REPORT_OUTPUT_DIR` 和 `OFFER_REPORT_PREFIX` 自定义目录/前缀
 
 ```bash
 cd services/crawler
@@ -41,7 +42,8 @@ $env:OFFER_LOCATION_KEYWORDS="杭州,深圳,全国"
 $env:OFFER_GRADUATE_YEARS="2027,2028"
 $env:OFFER_BATCH_KEYWORDS="秋招,实习"
 $env:OFFER_REPORT_FORMAT="csv"
-npm run preview:offer -- --output=tmp/offer-report.csv
+$env:OFFER_REPORT_AUTO_NAME="1"
+npm run preview:offer
 ```
 
 导入前 dry-run：
