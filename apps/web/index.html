@@ -15,6 +15,7 @@
     <button data-tab="match" class="tab">🎯 匹配</button>
     <button data-tab="pipeline" class="tab">📨 投递看板</button>
     <button data-tab="resume" class="tab">📄 简历版本</button>
+    <button data-tab="offer" class="tab">🛰️ Offer 导入</button>
   </nav>
 </header>
 <main>
@@ -96,6 +97,40 @@
     <div class="card">
       <h2>版本列表</h2>
       <div id="resumeList"></div>
+    </div>
+  </section>
+
+  <section id="panel-offer" class="panel">
+    <div class="card">
+      <h2>Offer 情报局筛选与导出</h2>
+      <p class="hint">填写筛选参数后，可直接在页面里调用后端预览 Offer 情报局结果，也可下载 JSON / Markdown / CSV 报告。</p>
+      <div class="grid">
+        <label>导航名 <input id="oNavigationNames" placeholder="信息总表,实习"></label>
+        <label>标题关键词 <input id="oTitleKeywords" placeholder="AI,算法,机器学习,后端"></label>
+        <label>全文关键词 <input id="oJobKeywords" placeholder="大模型,RAG,Python,数据,Agent"></label>
+        <label>公司关键词 <input id="oCompanyKeywords" placeholder="乐狗,华为,百度,腾讯,阿里"></label>
+        <label>地点关键词 <input id="oLocationKeywords" placeholder="杭州,深圳,全国"></label>
+        <label>毕业年份 <input id="oGraduateYears" placeholder="2027,2028"></label>
+        <label>招聘批次 <input id="oBatchKeywords" placeholder="秋招,实习"></label>
+        <label>读取条数 <input id="oLimit" placeholder="20" value="20"></label>
+        <label>报告格式
+          <select id="oReportFormat">
+            <option value="json">JSON</option>
+            <option value="md">Markdown</option>
+            <option value="csv">CSV</option>
+          </select>
+        </label>
+        <label>输出文件（可选） <input id="oOutputPath" placeholder="tmp/offer-report.csv"></label>
+      </div>
+      <label><input id="oAutoName" type="checkbox"> 自动按时间戳命名文件</label>
+      <div class="row">
+        <button id="btnOfferPreview" class="btn primary">页面预览</button>
+        <button id="btnOfferDownload" class="btn">下载报告</button>
+        <button id="btnOfferPreviewCmd" class="btn">生成预览命令</button>
+        <button id="btnOfferImport" class="btn">生成导入命令</button>
+        <button id="btnOfferCopy" class="btn">复制命令</button>
+      </div>
+      <div id="offerResult" class="result"></div>
     </div>
   </section>
 </main>

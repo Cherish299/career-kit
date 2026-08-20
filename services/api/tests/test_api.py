@@ -244,6 +244,69 @@ def test_job_create_reuses_same_source_and_external_id(client):
     assert len(snapshots) == 2
 
 
+def test_offer_preview_api_returns_json_and_markdown(client, monkeypatch):
+    from app.services import offer_preview
+
+    async def fake_build_offer_preview(payload):
+        if payload.report_format == "md":
+            return {
+                "source": "offerqingbaoju-info-summary",
+                "limit": payload.limit,
+                "selectors": {"navigationNames": payload.navigation_names},
+                "count": 1,
+                "generated_at": "2026-08-20T00:00:00Z",
+                "rows": None,
+                "report_text": "# Offer Job Report\n\n### AI 工程师",
+            }
+        return {
+            "source": "offerqingbaoju-info-summary",
+            "limit": payload.limit,
+            "selectors": {"navigationNames": payload.navigation_names},
+            "count": 1,
+            "generated_at": "2026-08-20T00:00:00Z",
+            "rows": [{"title": "AI 工程师"}],
+            "report_text": None,
+        }
+
+    monkeypatch.setattr(offer_preview, "build_offer_preview", fake_build_offer_preview)
+
+    json_preview = client.post(
+        "/api/offer/preview",
+        json={
+            "limit": 1,
+            "navigation_names": ["信息总表"],
+            "title_keywords": ["AI"],
+            "company_keywords": ["华为", "乐狗"],
+            "location_keywords": ["全国", "深圳"],
+            "graduate_years": ["2027", "2028"],
+            "batch_keywords": ["秋招"],
+            "report_format": "json",
+        },
+    )
+    assert json_preview.status_code == 200, json_preview.text
+    json_data = json_preview.json()
+    assert json_data["count"] == 1
+    assert json_data["rows"][0]["title"] == "AI 工程师"
+
+    markdown_preview = client.post(
+        "/api/offer/preview",
+        json={
+            "limit": 1,
+            "navigation_names": ["信息总表"],
+            "title_keywords": ["AI"],
+            "company_keywords": ["华为", "乐狗"],
+            "location_keywords": ["全国", "深圳"],
+            "graduate_years": ["2027", "2028"],
+            "batch_keywords": ["秋招"],
+            "report_format": "md",
+        },
+    )
+    assert markdown_preview.status_code == 200, markdown_preview.text
+    markdown_data = markdown_preview.json()
+    assert markdown_data["report_text"] is not None
+    assert "Offer Job Report" in markdown_data["report_text"]
+
+
 def test_resume_version_fork(client):
     """#6：母版 → 岗位定制副本（不覆盖母版）。"""
     profile = client.post("/api/profiles", json={"resume_json": SAMPLE_RESUME}).json()

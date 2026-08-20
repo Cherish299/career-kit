@@ -25,6 +25,11 @@ function toast(msg, kind) {
   setTimeout(() => t.remove(), 3000);
 }
 
+function setValue(id, value) {
+  const node = el(id);
+  if (node) node.value = value;
+}
+
 /* ---------- 通用：填充下拉 ---------- */
 async function fillSelect(id, rows, labelFn) {
   const sel = el(id);
@@ -208,6 +213,142 @@ async function renderResumeVersions() {
     : '<div class="muted">暂无简历版本。</div>';
 }
 
+/* ---------- Offer 导入 ---------- */
+function collectOfferConfig() {
+  return {
+    navigationNames: el("oNavigationNames").value.trim(),
+    titleKeywords: el("oTitleKeywords").value.trim(),
+    jobKeywords: el("oJobKeywords").value.trim(),
+    companyKeywords: el("oCompanyKeywords").value.trim(),
+    locationKeywords: el("oLocationKeywords").value.trim(),
+    graduateYears: el("oGraduateYears").value.trim(),
+    batchKeywords: el("oBatchKeywords").value.trim(),
+    limit: el("oLimit").value.trim() || "20",
+    reportFormat: el("oReportFormat").value,
+    outputPath: el("oOutputPath").value.trim(),
+    autoName: el("oAutoName").checked,
+  };
+}
+
+function buildOfferCommand(mode) {
+  const cfg = collectOfferConfig();
+  const lines = ["cd C:\\Users\\hew\\career-kit\\services\\crawler"];
+  const envPairs = [
+    ["OFFER_PREVIEW_LIMIT", mode === "preview" ? cfg.limit : ""],
+    ["OFFER_IMPORT_LIMIT", mode === "import" ? cfg.limit : ""],
+    ["OFFER_NAVIGATION_NAMES", cfg.navigationNames],
+    ["OFFER_TITLE_KEYWORDS", cfg.titleKeywords],
+    ["OFFER_JOB_KEYWORDS", cfg.jobKeywords],
+    ["OFFER_COMPANY_KEYWORDS", cfg.companyKeywords],
+    ["OFFER_LOCATION_KEYWORDS", cfg.locationKeywords],
+    ["OFFER_GRADUATE_YEARS", cfg.graduateYears],
+    ["OFFER_BATCH_KEYWORDS", cfg.batchKeywords],
+    ["OFFER_REPORT_FORMAT", cfg.reportFormat],
+  ];
+  for (const [key, value] of envPairs) {
+    if (value) lines.push(`$env:${key}="${value.replaceAll('"', '`"')}"`);
+  }
+  if (cfg.autoName) lines.push('$env:OFFER_REPORT_AUTO_NAME="1"');
+  const outputArg = cfg.outputPath ? ` -- --output=${cfg.outputPath}` : "";
+  lines.push(mode === "preview" ? `npm run preview:offer${outputArg}` : "npm run import:offer");
+  return lines.join("\n");
+}
+
+async function previewOfferInPage() {
+  const cfg = collectOfferConfig();
+  try {
+    const payload = {
+      limit: Number(cfg.limit || 20),
+      navigation_names: splitCsv(cfg.navigationNames),
+      title_keywords: splitCsv(cfg.titleKeywords),
+      any_keywords: splitCsv(cfg.jobKeywords),
+      company_keywords: splitCsv(cfg.companyKeywords),
+      location_keywords: splitCsv(cfg.locationKeywords),
+      graduate_years: splitCsv(cfg.graduateYears),
+      batch_keywords: splitCsv(cfg.batchKeywords),
+      report_format: cfg.reportFormat,
+    };
+    const data = await api("/offer/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (data.report_text) {
+      el("offerResult").innerHTML = `<div class="ok">已完成页面预览（${esc(String(data.count))} 条）</div><pre class="code-block">${esc(data.report_text)}</pre>`;
+    } else {
+      el("offerResult").innerHTML = `<div class="ok">已完成页面预览（${esc(String(data.count))} 条）</div><pre class="code-block">${esc(JSON.stringify(data, null, 2))}</pre>`;
+    }
+  } catch (err) {
+    toast("预览失败：" + err.message, "err");
+  }
+}
+
+async function downloadOfferReport() {
+  const cfg = collectOfferConfig();
+  try {
+    const payload = {
+      limit: Number(cfg.limit || 20),
+      navigation_names: splitCsv(cfg.navigationNames),
+      title_keywords: splitCsv(cfg.titleKeywords),
+      any_keywords: splitCsv(cfg.jobKeywords),
+      company_keywords: splitCsv(cfg.companyKeywords),
+      location_keywords: splitCsv(cfg.locationKeywords),
+      graduate_years: splitCsv(cfg.graduateYears),
+      batch_keywords: splitCsv(cfg.batchKeywords),
+      report_format: cfg.reportFormat,
+    };
+    const data = await api("/offer/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const text = data.report_text || JSON.stringify(data, null, 2);
+    const ext = cfg.reportFormat === "markdown" ? "md" : cfg.reportFormat;
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `offer-report.${ext}`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast("报告已开始下载");
+  } catch (err) {
+    toast("下载失败：" + err.message, "err");
+  }
+}
+
+function renderOfferCommand(mode) {
+  const command = buildOfferCommand(mode);
+  el("offerResult").innerHTML = `<div class="ok">已生成${mode === "preview" ? "预览" : "导入"}命令</div><pre class="code-block">${esc(command)}</pre>`;
+  el("offerResult").dataset.command = command;
+}
+
+async function copyOfferCommand() {
+  const command = el("offerResult").dataset.command;
+  if (!command) return toast("请先生成命令", "err");
+  try {
+    await navigator.clipboard.writeText(command);
+    toast("命令已复制");
+  } catch (err) {
+    toast("复制失败：" + err.message, "err");
+  }
+}
+
+function initOfferForm() {
+  setValue("oNavigationNames", "信息总表");
+  setValue("oTitleKeywords", "AI,算法,机器学习,后端");
+  setValue("oJobKeywords", "大模型,RAG,Python,数据,Agent");
+  setValue("oCompanyKeywords", "乐狗,华为,百度,腾讯,阿里");
+  setValue("oLocationKeywords", "杭州,深圳,全国");
+  setValue("oGraduateYears", "2027,2028");
+  setValue("oBatchKeywords", "秋招,实习");
+  setValue("oOutputPath", "tmp/offer-report.csv");
+}
+
+function splitCsv(value) {
+  return String(value || "").split(/[;,，；\n]+/).map((item) => item.trim()).filter(Boolean);
+}
+
 /* ---------- 初始化 ---------- */
 function bindTabs() {
   el("tabs").addEventListener("click", (e) => {
@@ -220,11 +361,17 @@ function bindTabs() {
 
 async function init() {
   bindTabs();
+  initOfferForm();
   el("btnImport").onclick = importProfile;
   el("btnAddJob").onclick = addJob;
   el("btnMatch").onclick = runMatch;
   el("btnAddApp").onclick = addApplication;
   el("btnFork").onclick = forkResume;
+  el("btnOfferPreview").onclick = previewOfferInPage;
+  el("btnOfferDownload").onclick = downloadOfferReport;
+  el("btnOfferPreviewCmd").onclick = () => renderOfferCommand("preview");
+  el("btnOfferImport").onclick = () => renderOfferCommand("import");
+  el("btnOfferCopy").onclick = copyOfferCommand;
   el("importFile").addEventListener("change", async () => {
     const file = el("importFile").files[0];
     if (file) el("importText").value = await file.text();
