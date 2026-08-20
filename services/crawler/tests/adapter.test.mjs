@@ -7,9 +7,10 @@ import { OfferQingBaoJuAdapter } from "../src/offerqingbaoju-adapter.js";
 import { applyRecordFilters } from "../src/filter-records.js";
 import { filterJobs, getKeywordConfig } from "../src/filter-jobs.js";
 import { importJobs } from "../src/import-jobs.js";
-import { buildJobReport, formatJobReportMarkdown } from "../src/job-report.js";
+import { buildJobReport, formatJobReportCsv, formatJobReportMarkdown } from "../src/job-report.js";
 import { fetchNavigations, resolveNavigationIdsByName } from "../src/navigation-index.js";
 import { getSelectConfig, selectJobs } from "../src/select-jobs.js";
+import { writeReport } from "../src/write-report.js";
 
 test("normalizeJobRecord returns job payload for API", () => {
   const row = normalizeJobRecord({
@@ -208,6 +209,14 @@ test("job report formats JSON payload and markdown output", () => {
   assert.match(markdown, /# Offer Job Report/);
   assert.match(markdown, /AI工程师（游戏理解方向）/);
   assert.match(markdown, /乐狗科技/);
+  const csv = formatJobReportCsv(report);
+  assert.match(csv, /title,company_name,location,external_id,source_url,requirements/);
+  assert.match(csv, /乐狗科技/);
+});
+
+test("writeReport saves rendered report to file", async () => {
+  const saved = await writeReport("tmp/offer-report-test.md", "# demo");
+  assert.match(saved, /offer-report-test\.md$/);
 });
 
 test("importJobs defaults to dry-run and writes only with explicit opt-in", async () => {

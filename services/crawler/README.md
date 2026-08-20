@@ -27,6 +27,8 @@ CareerOS 的岗位采集服务（计划第 5 周起搭建，P1）。
 
 - 默认输出 JSON
 - 可设置 `OFFER_REPORT_FORMAT=md` 导出 Markdown 报告
+- 可设置 `OFFER_REPORT_FORMAT=csv` 导出 CSV 报告
+- 可附加 `--output=tmp/report.md`、`--output=tmp/report.json` 或 `--output=tmp/report.csv` 直接写入文件
 
 ```bash
 cd services/crawler
@@ -38,8 +40,8 @@ $env:OFFER_COMPANY_KEYWORDS="乐狗,华为,百度,腾讯,阿里"
 $env:OFFER_LOCATION_KEYWORDS="杭州,深圳,全国"
 $env:OFFER_GRADUATE_YEARS="2027,2028"
 $env:OFFER_BATCH_KEYWORDS="秋招,实习"
-$env:OFFER_REPORT_FORMAT="md"
-npm run preview:offer
+$env:OFFER_REPORT_FORMAT="csv"
+npm run preview:offer -- --output=tmp/offer-report.csv
 ```
 
 导入前 dry-run：

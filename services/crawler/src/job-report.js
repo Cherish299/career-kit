@@ -51,6 +51,20 @@ export function formatJobReportMarkdown(report) {
   return lines.join("\n");
 }
 
+export function formatJobReportCsv(report) {
+  const headers = ["title", "company_name", "location", "external_id", "source_url", "requirements"];
+  const lines = [headers.join(",")];
+  for (const row of report.rows) {
+    lines.push(headers.map((key) => escapeCsv(row[key] || "")).join(","));
+  }
+  return lines.join("\n");
+}
+
+function escapeCsv(value) {
+  const text = String(value).replaceAll('"', '""');
+  return /[",\n]/.test(text) ? `"${text}"` : text;
+}
+
 function joinList(items) {
   return items && items.length ? items.join(", ") : "(none)";
 }
