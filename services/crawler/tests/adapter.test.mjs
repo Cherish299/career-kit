@@ -7,6 +7,7 @@ import { OfferQingBaoJuAdapter } from "../src/offerqingbaoju-adapter.js";
 import { applyRecordFilters } from "../src/filter-records.js";
 import { filterJobs, getKeywordConfig } from "../src/filter-jobs.js";
 import { importJobs } from "../src/import-jobs.js";
+import { buildJobReport, formatJobReportMarkdown } from "../src/job-report.js";
 import { fetchNavigations, resolveNavigationIdsByName } from "../src/navigation-index.js";
 import { getSelectConfig, selectJobs } from "../src/select-jobs.js";
 
@@ -177,6 +178,36 @@ test("applyRecordFilters supports location graduate year and batch", () => {
   const filtered = applyRecordFilters(records, config);
   assert.equal(filtered.length, 1);
   assert.equal(filtered[0]["毕业年份"], "2027");
+});
+
+test("job report formats JSON payload and markdown output", () => {
+  const report = buildJobReport({
+    source: "offerqingbaoju-info-summary",
+    limit: 5,
+    selectors: {
+      navigationNames: ["信息总表"],
+      navigationIds: ["60"],
+      titleKeywords: ["ai"],
+      anyKeywords: ["python"],
+      companyKeywords: ["乐狗"],
+      locationKeywords: ["全国"],
+      graduateYears: ["2027"],
+      batchKeywords: ["秋招"],
+    },
+    rows: [{
+      title: "AI工程师（游戏理解方向）",
+      company_name: "乐狗科技",
+      location: "全国",
+      external_id: "60:19:8",
+      source_url: "https://example.com/job",
+      requirements: "毕业年份：2027；招聘批次：秋招",
+    }],
+  });
+  assert.equal(report.count, 1);
+  const markdown = formatJobReportMarkdown(report);
+  assert.match(markdown, /# Offer Job Report/);
+  assert.match(markdown, /AI工程师（游戏理解方向）/);
+  assert.match(markdown, /乐狗科技/);
 });
 
 test("importJobs defaults to dry-run and writes only with explicit opt-in", async () => {

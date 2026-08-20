@@ -1,6 +1,7 @@
 import { OfferQingBaoJuAdapter } from "../src/offerqingbaoju-adapter.js";
 import { applyRecordFilters } from "../src/filter-records.js";
 import { DEFAULT_KEYWORDS } from "../src/filter-jobs.js";
+import { buildJobReport, formatJobReportMarkdown } from "../src/job-report.js";
 import { fetchNavigations, resolveNavigationIdsByName } from "../src/navigation-index.js";
 import { getSelectConfig, selectJobs } from "../src/select-jobs.js";
 
@@ -24,13 +25,11 @@ for (const ref of refs) {
   rows.push(...await adapter.normalizeMany(raw));
 }
 const filtered = selectJobs(rows, config);
+const report = buildJobReport({ source: adapter.meta.key, limit, selectors: config, rows: filtered });
+const reportFormat = String(process.env.OFFER_REPORT_FORMAT || "json").toLowerCase();
 
-console.log(JSON.stringify({
-  source: adapter.meta.key,
-  limit,
-  selectors: config,
-  count: filtered.length,
-  preview_only: true,
-  persisted: false,
-  rows: filtered,
-}, null, 2));
+if (reportFormat === "md" || reportFormat === "markdown") {
+  console.log(formatJobReportMarkdown(report));
+} else {
+  console.log(JSON.stringify({ ...report, preview_only: true, persisted: false }, null, 2));
+}
