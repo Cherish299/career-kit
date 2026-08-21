@@ -244,6 +244,45 @@ def test_job_create_reuses_same_source_and_external_id(client):
     assert len(snapshots) == 2
 
 
+def test_offer_import_api_returns_summary(client, monkeypatch):
+    from app.services import offer_import
+
+    async def fake_run_offer_import(payload, api_base):
+        return {
+            "source": "offerqingbaoju-info-summary",
+            "api_base": api_base,
+            "limit": payload.total_limit,
+            "selectors": {"navigationNames": payload.navigation_names, "pageLimit": payload.page_limit, "totalLimit": payload.total_limit, "pageFallback": False},
+            "selected": 2,
+            "written": True,
+            "imported": 2,
+            "failed": 0,
+            "results": [{"external_id": "60:1:1", "action": "reused"}],
+            "summary": {"created": 0, "reused": 2, "failed": 0, "companies": 1},
+        }
+
+    monkeypatch.setattr(offer_import, "run_offer_import", fake_run_offer_import)
+    response = client.post(
+        "/api/offer/import",
+        json={
+            "limit": 1,
+            "page_limit": 2,
+            "total_limit": 3,
+            "navigation_names": ["信息总表"],
+            "title_keywords": ["AI"],
+            "company_keywords": ["华为"],
+            "location_keywords": ["深圳"],
+            "graduate_years": ["2027"],
+            "batch_keywords": ["秋招"],
+            "report_format": "json",
+        },
+    )
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["written"] is True
+    assert data["summary"]["reused"] == 2
+
+
 def test_offer_preview_api_returns_json_and_markdown(client, monkeypatch):
     from app.services import offer_preview
 
@@ -251,8 +290,8 @@ def test_offer_preview_api_returns_json_and_markdown(client, monkeypatch):
         if payload.report_format == "md":
             return {
                 "source": "offerqingbaoju-info-summary",
-                "limit": payload.limit,
-                "selectors": {"navigationNames": payload.navigation_names},
+                "limit": payload.total_limit,
+                "selectors": {"navigationNames": payload.navigation_names, "pageLimit": payload.page_limit, "totalLimit": payload.total_limit, "pageFallback": False},
                 "count": 1,
                 "generated_at": "2026-08-20T00:00:00Z",
                 "rows": None,
@@ -260,8 +299,8 @@ def test_offer_preview_api_returns_json_and_markdown(client, monkeypatch):
             }
         return {
             "source": "offerqingbaoju-info-summary",
-            "limit": payload.limit,
-            "selectors": {"navigationNames": payload.navigation_names},
+            "limit": payload.total_limit,
+            "selectors": {"navigationNames": payload.navigation_names, "pageLimit": payload.page_limit, "totalLimit": payload.total_limit, "pageFallback": False},
             "count": 1,
             "generated_at": "2026-08-20T00:00:00Z",
             "rows": [{"title": "AI 工程师"}],
@@ -274,6 +313,8 @@ def test_offer_preview_api_returns_json_and_markdown(client, monkeypatch):
         "/api/offer/preview",
         json={
             "limit": 1,
+            "page_limit": 2,
+            "total_limit": 3,
             "navigation_names": ["信息总表"],
             "title_keywords": ["AI"],
             "company_keywords": ["华为", "乐狗"],
@@ -292,6 +333,8 @@ def test_offer_preview_api_returns_json_and_markdown(client, monkeypatch):
         "/api/offer/preview",
         json={
             "limit": 1,
+            "page_limit": 2,
+            "total_limit": 3,
             "navigation_names": ["信息总表"],
             "title_keywords": ["AI"],
             "company_keywords": ["华为", "乐狗"],

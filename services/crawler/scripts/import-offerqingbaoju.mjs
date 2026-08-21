@@ -3,16 +3,13 @@ import { applyRecordFilters } from "../src/filter-records.js";
 import { DEFAULT_KEYWORDS } from "../src/filter-jobs.js";
 import { importJobs } from "../src/import-jobs.js";
 import { fetchNavigations, resolveNavigationIdsByName } from "../src/navigation-index.js";
+import { readOfferRunConfig } from "../src/offer-run-config.js";
 import { readExistingJobs } from "../src/read-existing-jobs.js";
 import { getSelectConfig, selectJobs } from "../src/select-jobs.js";
 
-const limit = Number.parseInt(process.env.OFFER_IMPORT_LIMIT || "5", 10);
+const { limit, pageLimit, totalLimit } = readOfferRunConfig(process.env, "import");
 const apiBase = process.env.CAREER_API_BASE || "http://127.0.0.1:8000";
 const write = process.argv.includes("--write");
-
-if (!Number.isInteger(limit) || limit < 1 || limit > 20) {
-  throw new Error("OFFER_IMPORT_LIMIT must be an integer from 1 to 20");
-}
 if (!write) {
   console.error("dry-run: no jobs will be written; add --write to import explicitly");
 }
@@ -23,7 +20,7 @@ if (config.navigationNames.length) {
   const navigations = await fetchNavigations();
   config.navigationIds = [...new Set([...config.navigationIds, ...resolveNavigationIdsByName(navigations, config.navigationNames)])];
 }
-const adapter = new OfferQingBaoJuAdapter({ limit });
+const adapter = new OfferQingBaoJuAdapter({ limit, pageLimit, totalLimit });
 const refs = await adapter.discover();
 const rows = [];
 for (const ref of refs) {
@@ -38,5 +35,5 @@ const result = await importJobs(filtered, {
   write,
   readExisting: (externalIds) => readExistingJobs(externalIds, { apiBase }),
 });
-console.log(JSON.stringify({ source: adapter.meta.key, api_base: apiBase, limit, selectors: config, selected: filtered.length, ...result }, null, 2));
+console.log(JSON.stringify({ source: adapter.meta.key, api_base: apiBase, limit: totalLimit, selectors: { ...config, pageLimit, totalLimit, pageFallback: adapter.pageFallback }, selected: filtered.length, ...result }, null, 2));
 if (result.failed) process.exitCode = 1;

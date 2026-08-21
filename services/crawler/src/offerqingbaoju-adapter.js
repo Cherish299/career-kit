@@ -11,17 +11,20 @@ const API_URL = "https://offerqingbaoju.cn/api";
 const DEFAULT_NAVIGATION_ID = 60;
 
 export class OfferQingBaoJuAdapter extends SourceAdapter {
-  constructor({ fetchImpl = globalThis.fetch, navigationId = DEFAULT_NAVIGATION_ID, limit = 20, fixture = false } = {}) {
+  constructor({ fetchImpl = globalThis.fetch, navigationId = DEFAULT_NAVIGATION_ID, limit = 20, pageLimit = 1, totalLimit = 20, fixture = false } = {}) {
     super({ key: SOURCE_KEY, label: "Offer 情报局信息汇总" });
     this.fetchImpl = fetchImpl;
     this.navigationId = navigationId;
     this.limit = Math.max(1, Math.min(limit, 100));
+    this.pageLimit = Math.max(1, Math.min(pageLimit, 20));
+    this.totalLimit = Math.max(1, Math.min(totalLimit, 400));
     this.fixture = fixture;
     this.records = new Map();
+    this.pageFallback = false;
   }
 
   async discover() {
-    const records = this.fixture ? (await this.#loadFixture()).records : await this.#fetchPage(1, this.limit);
+    const records = this.fixture ? (await this.#loadFixture()).records.slice(0, this.totalLimit) : await this.#fetchPages();
     return records.map((record) => {
       const ref = this.#toRef(record);
       this.records.set(ref.external_id, record);
@@ -135,6 +138,23 @@ export class OfferQingBaoJuAdapter extends SourceAdapter {
     const body = await response.json();
     if (!Array.isArray(body.data)) throw new Error("Offer 情报局 API returned invalid data");
     return body.data.map((record) => ({ ...record, page }));
+  }
+
+  async #fetchPages() {
+    const records = [];
+    for (let page = 1; page <= this.pageLimit && records.length < this.totalLimit; page += 1) {
+      try {
+        const rows = await this.#fetchPage(page, this.limit);
+        if (!rows.length) break;
+        records.push(...rows);
+        if (rows.length < this.limit) break;
+      } catch (error) {
+        if (page === 1 || this.pageLimit === 1) throw error;
+        this.pageFallback = true;
+        break;
+      }
+    }
+    return records.slice(0, this.totalLimit);
   }
 
   async #loadFixture() {

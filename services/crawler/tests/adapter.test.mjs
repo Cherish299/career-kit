@@ -9,6 +9,7 @@ import { filterJobs, getKeywordConfig } from "../src/filter-jobs.js";
 import { importJobs } from "../src/import-jobs.js";
 import { buildJobReport, formatJobReportCsv, formatJobReportMarkdown } from "../src/job-report.js";
 import { fetchNavigations, resolveNavigationIdsByName } from "../src/navigation-index.js";
+import { readOfferRunConfig } from "../src/offer-run-config.js";
 import { getSelectConfig, selectJobs } from "../src/select-jobs.js";
 import { resolveReportOutput, timestampedReportPath, writeReport } from "../src/write-report.js";
 
@@ -88,12 +89,102 @@ test("Offer 情报局 adapter keeps commas inside parentheses", async () => {
   assert.deepEqual(rows.map((row) => row.title), ["实习教师（英语、信息技术与人工智能）", "算法工程师"]);
 });
 
+test("readOfferRunConfig supports multi-page traversal settings", () => {
+  const config = readOfferRunConfig({ OFFER_PREVIEW_LIMIT: "5", OFFER_PAGE_LIMIT: "3", OFFER_TOTAL_LIMIT: "12" }, "preview");
+  assert.equal(config.limit, 5);
+  assert.equal(config.pageLimit, 3);
+  assert.equal(config.totalLimit, 12);
+});
+
 test("Offer 情报局 adapter maps mocked public API fields", async () => {
   const calls = [];
   const adapter = new OfferQingBaoJuAdapter({
     limit: 2,
+    pageLimit: 2,
+    totalLimit: 10,
     fetchImpl: async (url) => {
       calls.push(url);
+      const page = url.includes("page=2&") ? 2 : 1;
+      const perPage = url.includes("per_page=2") ? 2 : 1;
+      const baseRows = page === 2
+        ? [{
+            _row_number: 8,
+            企业名称: "公开样例公司",
+            公告链接: "https://example.com/notice/8",
+            投递地址: "https://example.com/apply/8",
+            工作地点: "深圳",
+            职位: "算法工程师",
+            学历要求: "硕士",
+            毕业年份: "2027",
+            招聘批次: "秋招",
+            招聘公告: "公开样例公司招聘公告",
+            开始时间: "2026-08-18",
+            截止时间: "招满为止",
+            更新时间: "2026-08-19"
+          }]
+        : [{
+            _row_number: 7,
+            企业名称: "公开样例公司",
+            公告链接: "https://example.com/notice/7",
+            投递地址: "https://example.com/apply/7",
+            工作地点: "深圳",
+            职位: "机器学习工程师",
+            学历要求: "硕士",
+            毕业年份: "2027",
+            招聘批次: "秋招",
+            招聘公告: "公开样例公司招聘公告",
+            开始时间: "2026-08-18",
+            截止时间: "招满为止",
+            更新时间: "2026-08-19"
+          }, {
+            _row_number: 9,
+            企业名称: "公开样例公司",
+            公告链接: "https://example.com/notice/9",
+            投递地址: "https://example.com/apply/9",
+            工作地点: "上海",
+            职位: "后端开发工程师",
+            学历要求: "本科",
+            毕业年份: "2028",
+            招聘批次: "秋招",
+            招聘公告: "公开样例公司招聘公告",
+            开始时间: "2026-08-18",
+            截止时间: "招满为止",
+            更新时间: "2026-08-19"
+          }];
+      return {
+        ok: true,
+        async json() {
+          return {
+            data: baseRows.slice(0, perPage)
+          };
+        }
+      };
+    }
+  });
+
+  const refs = await adapter.discover();
+  const normalizedRows = await adapter.normalizeMany(await adapter.fetch(refs[0]));
+  assert.equal(refs.length, 3);
+  assert.equal(refs[0].external_id, "60:7");
+  assert.equal(refs[1].external_id, "60:9");
+  assert.equal(refs[2].external_id, "60:8");
+  assert.equal(normalizedRows.length, 1);
+  assert.equal(normalizedRows[0].title, "机器学习工程师");
+  assert.equal(normalizedRows[0].external_id, "60:7:1");
+  assert.equal(normalizedRows[0].company_name, "公开样例公司");
+  assert.equal(calls.length, 2);
+  assert.match(calls[0], /per_page=2/);
+});
+
+test("Offer 情报局 adapter falls back to first page when later pages fail", async () => {
+  const adapter = new OfferQingBaoJuAdapter({
+    limit: 2,
+    pageLimit: 2,
+    totalLimit: 10,
+    fetchImpl: async (url) => {
+      if (url.includes("page=2&")) {
+        return { ok: false, status: 401, async json() { return {}; } };
+      }
       return {
         ok: true,
         async json() {
@@ -112,6 +203,20 @@ test("Offer 情报局 adapter maps mocked public API fields", async () => {
               开始时间: "2026-08-18",
               截止时间: "招满为止",
               更新时间: "2026-08-19"
+            }, {
+              _row_number: 9,
+              企业名称: "公开样例公司",
+              公告链接: "https://example.com/notice/9",
+              投递地址: "https://example.com/apply/9",
+              工作地点: "上海",
+              职位: "后端开发工程师",
+              学历要求: "本科",
+              毕业年份: "2028",
+              招聘批次: "秋招",
+              招聘公告: "公开样例公司招聘公告",
+              开始时间: "2026-08-18",
+              截止时间: "招满为止",
+              更新时间: "2026-08-19"
             }]
           };
         }
@@ -120,14 +225,10 @@ test("Offer 情报局 adapter maps mocked public API fields", async () => {
   });
 
   const refs = await adapter.discover();
-  const normalizedRows = await adapter.normalizeMany(await adapter.fetch(refs[0]));
+  assert.equal(adapter.pageFallback, true);
+  assert.equal(refs.length, 2);
   assert.equal(refs[0].external_id, "60:7");
-  assert.equal(normalizedRows.length, 1);
-  assert.equal(normalizedRows[0].title, "机器学习工程师");
-  assert.equal(normalizedRows[0].external_id, "60:7:1");
-  assert.equal(normalizedRows[0].company_name, "公开样例公司");
-  assert.equal(calls.length, 1);
-  assert.match(calls[0], /per_page=2/);
+  assert.equal(refs[1].external_id, "60:9");
 });
 
 test("filterJobs keeps only rows matching target keywords", () => {

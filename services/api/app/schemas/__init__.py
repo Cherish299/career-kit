@@ -21,7 +21,7 @@ from app.schemas.job import (
     JobSnapshotRead,
     JobUpdate,
 )
-from app.schemas.offer import OfferPreviewRequest, OfferPreviewResponse
+from app.schemas.offer import OfferImportRequest, OfferImportResponse, OfferPreviewRequest, OfferPreviewResponse
 from app.schemas.profile import (
     ExperienceCreate,
     ExperienceRead,
@@ -52,6 +52,8 @@ __all__ = [
     "JobUpdate",
     "MatchReportCreate",
     "MatchReportRead",
+    "OfferImportRequest",
+    "OfferImportResponse",
     "OfferPreviewRequest",
     "OfferPreviewResponse",
     "PreferenceBase",

@@ -214,6 +214,8 @@ async function renderResumeVersions() {
 }
 
 /* ---------- Offer 导入 ---------- */
+const OFFER_STORAGE_KEY = "careeros.offer.filters.v1";
+
 function collectOfferConfig() {
   return {
     navigationNames: el("oNavigationNames").value.trim(),
@@ -224,6 +226,8 @@ function collectOfferConfig() {
     graduateYears: el("oGraduateYears").value.trim(),
     batchKeywords: el("oBatchKeywords").value.trim(),
     limit: el("oLimit").value.trim() || "20",
+    pageLimit: el("oPageLimit").value.trim() || "1",
+    totalLimit: el("oTotalLimit").value.trim() || "20",
     reportFormat: el("oReportFormat").value,
     outputPath: el("oOutputPath").value.trim(),
     autoName: el("oAutoName").checked,
@@ -236,6 +240,8 @@ function buildOfferCommand(mode) {
   const envPairs = [
     ["OFFER_PREVIEW_LIMIT", mode === "preview" ? cfg.limit : ""],
     ["OFFER_IMPORT_LIMIT", mode === "import" ? cfg.limit : ""],
+    ["OFFER_PAGE_LIMIT", cfg.pageLimit],
+    ["OFFER_TOTAL_LIMIT", cfg.totalLimit],
     ["OFFER_NAVIGATION_NAMES", cfg.navigationNames],
     ["OFFER_TITLE_KEYWORDS", cfg.titleKeywords],
     ["OFFER_JOB_KEYWORDS", cfg.jobKeywords],
@@ -256,9 +262,12 @@ function buildOfferCommand(mode) {
 
 async function previewOfferInPage() {
   const cfg = collectOfferConfig();
+  persistOfferConfig();
   try {
     const payload = {
       limit: Number(cfg.limit || 20),
+      page_limit: Number(cfg.pageLimit || 1),
+      total_limit: Number(cfg.totalLimit || 20),
       navigation_names: splitCsv(cfg.navigationNames),
       title_keywords: splitCsv(cfg.titleKeywords),
       any_keywords: splitCsv(cfg.jobKeywords),
@@ -283,11 +292,43 @@ async function previewOfferInPage() {
   }
 }
 
-async function downloadOfferReport() {
+async function writeOfferJobs() {
   const cfg = collectOfferConfig();
+  persistOfferConfig();
   try {
     const payload = {
       limit: Number(cfg.limit || 20),
+      page_limit: Number(cfg.pageLimit || 1),
+      total_limit: Number(cfg.totalLimit || 20),
+      navigation_names: splitCsv(cfg.navigationNames),
+      title_keywords: splitCsv(cfg.titleKeywords),
+      any_keywords: splitCsv(cfg.jobKeywords),
+      company_keywords: splitCsv(cfg.companyKeywords),
+      location_keywords: splitCsv(cfg.locationKeywords),
+      graduate_years: splitCsv(cfg.graduateYears),
+      batch_keywords: splitCsv(cfg.batchKeywords),
+      report_format: cfg.reportFormat,
+    };
+    const data = await api("/offer/import", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    el("offerImportSummary").innerHTML = `<div class="ok">已完成正式导入：新增 ${esc(String(data.summary.created || 0))}，复用 ${esc(String(data.summary.reused || 0))}，失败 ${esc(String(data.summary.failed || 0))}，公司 ${esc(String(data.summary.companies || 0))}</div><pre class="code-block">${esc(JSON.stringify(data, null, 2))}</pre>`;
+    toast("正式导入已完成");
+  } catch (err) {
+    toast("导入失败：" + err.message, "err");
+  }
+}
+
+async function downloadOfferReport() {
+  const cfg = collectOfferConfig();
+  persistOfferConfig();
+  try {
+    const payload = {
+      limit: Number(cfg.limit || 20),
+      page_limit: Number(cfg.pageLimit || 1),
+      total_limit: Number(cfg.totalLimit || 20),
       navigation_names: splitCsv(cfg.navigationNames),
       title_keywords: splitCsv(cfg.titleKeywords),
       any_keywords: splitCsv(cfg.jobKeywords),
@@ -335,14 +376,51 @@ async function copyOfferCommand() {
 }
 
 function initOfferForm() {
-  setValue("oNavigationNames", "信息总表");
-  setValue("oTitleKeywords", "AI,算法,机器学习,后端");
-  setValue("oJobKeywords", "大模型,RAG,Python,数据,Agent");
-  setValue("oCompanyKeywords", "乐狗,华为,百度,腾讯,阿里");
-  setValue("oLocationKeywords", "杭州,深圳,全国");
-  setValue("oGraduateYears", "2027,2028");
-  setValue("oBatchKeywords", "秋招,实习");
-  setValue("oOutputPath", "tmp/offer-report.csv");
+  const saved = loadOfferConfig();
+  setValue("oTitleKeywords", saved.titleKeywords || "AI,算法,机器学习,后端");
+  setValue("oJobKeywords", saved.jobKeywords || "大模型,RAG,Python,数据,Agent");
+  setValue("oCompanyKeywords", saved.companyKeywords || "乐狗,华为,百度,腾讯,阿里");
+  setValue("oLocationKeywords", saved.locationKeywords || "杭州,深圳,全国");
+  setValue("oGraduateYears", saved.graduateYears || "2027,2028");
+  setValue("oBatchKeywords", saved.batchKeywords || "秋招,实习");
+  setValue("oOutputPath", saved.outputPath || "tmp/offer-report.csv");
+  setValue("oLimit", saved.limit || "20");
+  setValue("oPageLimit", saved.pageLimit || "1");
+  setValue("oTotalLimit", saved.totalLimit || "20");
+  if (saved.reportFormat) el("oReportFormat").value = saved.reportFormat;
+  el("oAutoName").checked = Boolean(saved.autoName);
+}
+
+function loadOfferConfig() {
+  try {
+    return JSON.parse(localStorage.getItem(OFFER_STORAGE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function persistOfferConfig() {
+  localStorage.setItem(OFFER_STORAGE_KEY, JSON.stringify(collectOfferConfig()));
+}
+
+async function loadOfferNavigations() {
+  try {
+    const response = await fetch("/api/offer/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ limit: 1, report_format: "json" }),
+    });
+    if (!response.ok) return;
+    const saved = loadOfferConfig();
+    const select = el("oNavigationNames");
+    const options = ["信息总表", "实习"].map((name) => `<option value="${esc(name)}">${esc(name)}</option>`).join("");
+    select.innerHTML = `<option value="">请选择导航</option>${options}`;
+    select.value = saved.navigationNames || "信息总表";
+  } catch {
+    const select = el("oNavigationNames");
+    select.innerHTML = `<option value="信息总表">信息总表</option><option value="实习">实习</option>`;
+    select.value = "信息总表";
+  }
 }
 
 function splitCsv(value) {
@@ -362,6 +440,7 @@ function bindTabs() {
 async function init() {
   bindTabs();
   initOfferForm();
+  await loadOfferNavigations();
   el("btnImport").onclick = importProfile;
   el("btnAddJob").onclick = addJob;
   el("btnMatch").onclick = runMatch;
@@ -369,6 +448,7 @@ async function init() {
   el("btnFork").onclick = forkResume;
   el("btnOfferPreview").onclick = previewOfferInPage;
   el("btnOfferDownload").onclick = downloadOfferReport;
+  el("btnOfferWrite").onclick = writeOfferJobs;
   el("btnOfferPreviewCmd").onclick = () => renderOfferCommand("preview");
   el("btnOfferImport").onclick = () => renderOfferCommand("import");
   el("btnOfferCopy").onclick = copyOfferCommand;

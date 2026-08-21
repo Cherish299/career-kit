@@ -15,6 +15,8 @@ PREVIEW_SCRIPT = CRAWLER_DIR / "scripts" / "preview-offerqingbaoju.mjs"
 def _build_env(payload: OfferPreviewRequest) -> dict[str, str]:
     env = os.environ.copy()
     env["OFFER_PREVIEW_LIMIT"] = str(payload.limit)
+    env["OFFER_PAGE_LIMIT"] = str(payload.page_limit)
+    env["OFFER_TOTAL_LIMIT"] = str(payload.total_limit)
     if payload.navigation_names:
         env["OFFER_NAVIGATION_NAMES"] = ",".join(payload.navigation_names)
     if payload.title_keywords:
@@ -52,7 +54,7 @@ async def build_offer_preview(payload: OfferPreviewRequest) -> dict:
     if payload.report_format in {"md", "markdown", "csv"}:
         return {
             "source": "offerqingbaoju-info-summary",
-            "limit": payload.limit,
+            "limit": payload.total_limit,
             "selectors": {
                 "navigationNames": payload.navigation_names,
                 "titleKeywords": payload.title_keywords,
@@ -61,6 +63,8 @@ async def build_offer_preview(payload: OfferPreviewRequest) -> dict:
                 "locationKeywords": payload.location_keywords,
                 "graduateYears": payload.graduate_years,
                 "batchKeywords": payload.batch_keywords,
+                "pageLimit": payload.page_limit,
+                "totalLimit": payload.total_limit,
             },
             "count": _count_report_rows(output, payload.report_format),
             "generated_at": "",
