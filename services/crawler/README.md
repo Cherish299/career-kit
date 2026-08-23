@@ -21,7 +21,7 @@ CareerOS 的岗位采集服务（计划第 5 周起搭建，P1）。
 - `scripts/preview-offerqingbaoju.mjs`：只读预览脚本，不写数据库
 - `scripts/import-offerqingbaoju.mjs`：显式导入脚本，默认 dry-run，只有 `--write` 才调用 Job API
 
-> 真实 API 预览默认最多读取 5 条，可用 `OFFER_PREVIEW_LIMIT=1..20` 调整。导入默认也是 dry-run；可通过 `OFFER_JOB_KEYWORDS` 做全文关键词筛选，并额外使用 `OFFER_TITLE_KEYWORDS`、`OFFER_COMPANY_KEYWORDS`、`OFFER_NAVIGATION_IDS`、`OFFER_NAVIGATION_NAMES`、`OFFER_LOCATION_KEYWORDS`、`OFFER_GRADUATE_YEARS`、`OFFER_BATCH_KEYWORDS` 做更精细的标题/公司/导航/地点/毕业年份/批次筛选。导入结果会输出 `summary` 汇总，并在写入时区分 `created` 和 `reused`。正式批量同步前仍需确认公开接口、robots.txt、使用条款和数据再利用边界。
+> 真实 API 预览默认最多读取 5 条，可用 `OFFER_PREVIEW_LIMIT=1..20` 调整；`OFFER_PAGE_LIMIT=1..20` 控制最多尝试页数，`OFFER_TOTAL_LIMIT=1..400` 控制返回的原始记录上限。当前公开接口允许第一页使用较大的 `per_page` 批量读取，但第二页及以后可能要求登录验证，因此 adapter 会优先用一次大批量请求满足总量；接口拒绝后续翻页时保留已取得数据并标记 `pageFallback`。导入默认也是 dry-run；可通过 `OFFER_JOB_KEYWORDS` 做全文关键词筛选，并额外使用 `OFFER_TITLE_KEYWORDS`、`OFFER_COMPANY_KEYWORDS`、`OFFER_NAVIGATION_IDS`、`OFFER_NAVIGATION_NAMES`、`OFFER_LOCATION_KEYWORDS`、`OFFER_GRADUATE_YEARS`、`OFFER_BATCH_KEYWORDS` 做更精细的标题/公司/导航/地点/毕业年份/批次筛选。导入结果会输出 `summary` 汇总，并在写入时区分 `created` 和 `reused`。正式批量同步前仍需确认公开接口、robots.txt、使用条款和数据再利用边界。
 
 只读预览：
 

@@ -21,6 +21,8 @@ export class OfferQingBaoJuAdapter extends SourceAdapter {
     this.fixture = fixture;
     this.records = new Map();
     this.pageFallback = false;
+    this.pageStrategy = "single-page";
+    this.pagination = null;
   }
 
   async discover() {
@@ -137,23 +139,54 @@ export class OfferQingBaoJuAdapter extends SourceAdapter {
     if (!response.ok) throw new Error(`Offer 情报局 API returned ${response.status}`);
     const body = await response.json();
     if (!Array.isArray(body.data)) throw new Error("Offer 情报局 API returned invalid data");
+    if (body.pagination) this.pagination = body.pagination;
     return body.data.map((record) => ({ ...record, page }));
   }
 
   async #fetchPages() {
     const records = [];
-    for (let page = 1; page <= this.pageLimit && records.length < this.totalLimit; page += 1) {
-      try {
-        const rows = await this.#fetchPage(page, this.limit);
-        if (!rows.length) break;
-        records.push(...rows);
-        if (rows.length < this.limit) break;
-      } catch (error) {
-        if (page === 1 || this.pageLimit === 1) throw error;
-        this.pageFallback = true;
-        break;
+    const requestSize = Math.min(10000, Math.max(this.limit, this.totalLimit, this.pageLimit * this.limit));
+    try {
+      const rows = await this.#fetchPage(1, requestSize);
+      records.push(...rows);
+      this.pageStrategy = "single-request";
+    } catch (error) {
+      if (this.pageLimit === 1) throw error;
+      this.pageFallback = true;
+      this.pageStrategy = "single-page-fallback";
+    }
+
+    if (!records.length && this.pageFallback) {
+      for (let page = 1; page <= this.pageLimit && records.length < this.totalLimit; page += 1) {
+        try {
+          const rows = await this.#fetchPage(page, this.limit);
+          if (!rows.length) break;
+          records.push(...rows);
+          if (rows.length < this.limit) break;
+        } catch (error) {
+          if (page === 1 && !records.length) throw error;
+          break;
+        }
+      }
+      return records.slice(0, this.totalLimit);
+    }
+
+    if (this.pagination?.has_next && records.length < this.totalLimit) {
+      this.pageStrategy = "multi-page";
+      for (let page = 2; page <= this.pageLimit && records.length < this.totalLimit; page += 1) {
+        try {
+          const rows = await this.#fetchPage(page, requestSize);
+          if (!rows.length) break;
+          records.push(...rows);
+          if (!this.pagination?.has_next) break;
+        } catch (error) {
+          this.pageFallback = true;
+          this.pageStrategy = "multi-page-partial";
+          break;
+        }
       }
     }
+
     return records.slice(0, this.totalLimit);
   }
 

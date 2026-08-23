@@ -35,5 +35,19 @@ const result = await importJobs(filtered, {
   write,
   readExisting: (externalIds) => readExistingJobs(externalIds, { apiBase }),
 });
-console.log(JSON.stringify({ source: adapter.meta.key, api_base: apiBase, limit: totalLimit, selectors: { ...config, pageLimit, totalLimit, pageFallback: adapter.pageFallback }, selected: filtered.length, ...result }, null, 2));
+console.log(JSON.stringify({
+  source: adapter.meta.key,
+  api_base: apiBase,
+  limit: totalLimit,
+  selectors: {
+    ...config,
+    pageLimit,
+    totalLimit,
+    pageFallback: adapter.pageFallback,
+    pageStrategy: adapter.pageStrategy,
+    pagination: adapter.pagination,
+  },
+  selected: filtered.length,
+  ...result,
+}, null, 2));
 if (result.failed) process.exitCode = 1;

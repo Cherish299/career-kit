@@ -105,7 +105,7 @@ test("Offer 情报局 adapter maps mocked public API fields", async () => {
     fetchImpl: async (url) => {
       calls.push(url);
       const page = url.includes("page=2&") ? 2 : 1;
-      const perPage = url.includes("per_page=2") ? 2 : 1;
+      const perPage = Number(new URL(url).searchParams.get("per_page"));
       const baseRows = page === 2
         ? [{
             _row_number: 8,
@@ -155,7 +155,8 @@ test("Offer 情报局 adapter maps mocked public API fields", async () => {
         ok: true,
         async json() {
           return {
-            data: baseRows.slice(0, perPage)
+            data: baseRows.slice(0, Math.min(perPage, baseRows.length)),
+            pagination: { page, per_page: perPage, has_next: page < 2, total_pages: 2, total_rows: 3 }
           };
         }
       };
@@ -173,7 +174,36 @@ test("Offer 情报局 adapter maps mocked public API fields", async () => {
   assert.equal(normalizedRows[0].external_id, "60:7:1");
   assert.equal(normalizedRows[0].company_name, "公开样例公司");
   assert.equal(calls.length, 2);
-  assert.match(calls[0], /per_page=2/);
+  assert.match(calls[0], /per_page=10/);
+});
+
+test("Offer 情报局 adapter uses one large public request for total limit", async () => {
+  const calls = [];
+  const adapter = new OfferQingBaoJuAdapter({
+    limit: 2,
+    pageLimit: 3,
+    totalLimit: 5,
+    fetchImpl: async (url) => {
+      calls.push(url);
+      return {
+        ok: true,
+        async json() {
+          return {
+            pagination: { page: 1, per_page: 5, total_pages: 3, total_rows: 12, has_next: true },
+            data: Array.from({ length: 5 }, (_, index) => ({ _row_number: index + 1, 企业名称: `公司${index + 1}`, 职位: "算法工程师" })),
+          };
+        },
+      };
+    },
+  });
+
+  const refs = await adapter.discover();
+  assert.equal(refs.length, 5);
+  assert.equal(adapter.pageStrategy, "single-request");
+  assert.equal(adapter.pageFallback, false);
+  assert.equal(adapter.pagination.total_rows, 12);
+  assert.equal(calls.length, 1);
+  assert.match(calls[0], /page=1&per_page=6/);
 });
 
 test("Offer 情报局 adapter falls back to first page when later pages fail", async () => {
@@ -185,10 +215,14 @@ test("Offer 情报局 adapter falls back to first page when later pages fail", a
       if (url.includes("page=2&")) {
         return { ok: false, status: 401, async json() { return {}; } };
       }
+      if (url.includes("per_page=10")) {
+        return { ok: false, status: 401, async json() { return {}; } };
+      }
       return {
         ok: true,
         async json() {
           return {
+            pagination: { page: 1, per_page: 2, has_next: true, total_pages: 2, total_rows: 3 },
             data: [{
               _row_number: 7,
               企业名称: "公开样例公司",

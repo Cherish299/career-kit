@@ -27,7 +27,14 @@ const filtered = selectJobs(rows, config);
 const report = buildJobReport({
   source: adapter.meta.key,
   limit: totalLimit,
-  selectors: { ...config, pageLimit, totalLimit, pageFallback: adapter.pageFallback },
+  selectors: {
+    ...config,
+    pageLimit,
+    totalLimit,
+    pageFallback: adapter.pageFallback,
+    pageStrategy: adapter.pageStrategy,
+    pagination: adapter.pagination,
+  },
   rows: filtered,
 });
 const reportFormat = String(process.env.OFFER_REPORT_FORMAT || "json").toLowerCase();
