@@ -77,8 +77,15 @@ jobs:
                                  "company_name": "示例公司", "requirements": "Python FastAPI RAG Neo4j"})
           m = post(f"/api/matches/analyze?profile_id={p['id']}&job_id={j['id']}", {})
           assert m["scores"]["total"] > 0, "match failed"
+          sync = post("/api/jobs/sync", {"source": "crawler", "rows": [{
+              "external_id": "smoke-1", "title": "AI应用开发", "company_name": "冒烟公司",
+              "location": "深圳", "requirements": "Python FastAPI", "description": "负责岗位同步", "deadline": "2027-09-30"
+          }]})
+          assert sync["created"] == 1, "job sync failed"
+          alerts = json.loads(urllib.request.urlopen("http://127.0.0.1:8099/api/jobs/alerts?unread_only=true", timeout=15).read())
+          assert alerts == [], "new sync should not create unread alerts"
           a = post("/api/applications", {"profile_id": p["id"], "job_id": j["id"], "status": "discovered"})
-          print("boot smoke ok: import/match/application", m["scores"]["total"])
+          print("boot smoke ok: import/match/sync/application", m["scores"]["total"], sync["created"])
           EOF
           kill %1 2>/dev/null || true
         working-directory: services/api
