@@ -39,14 +39,15 @@ async function fillSelect(id, rows, labelFn) {
 }
 
 async function refreshDropdowns() {
-  const [profiles, jobs] = await Promise.all([api("/profiles"), api("/jobs")]);
+  const [profiles, jobs, apps] = await Promise.all([api("/profiles"), api("/jobs"), api("/applications")]);
   fillSelect("mProfile", profiles, (p) => p.display_name || p.id.slice(0, 8));
   fillSelect("mJob", jobs, (j) => `${j.title || "未命名岗位"} @ ${j.company_name || "无公司"}`);
   fillSelect("pProfile", profiles, (p) => p.display_name || p.id.slice(0, 8));
   fillSelect("pJob", jobs, (j) => j.title || j.id.slice(0, 8));
   fillSelect("rProfile", profiles, (p) => p.display_name || p.id.slice(0, 8));
   fillSelect("rJob", jobs, (j) => j.title || j.id.slice(0, 8));
-  return { profiles, jobs };
+  fillSelect("iApplication", apps, (a) => `${STATUS_DISPLAY[a.status] || a.status} · ${a.job_id.slice(0, 8)}`);
+  return { profiles, jobs, apps };
 }
 
 /* ---------- 个人中心 ---------- */
@@ -259,6 +260,20 @@ async function renderResumeVersions() {
   el("resumeList").innerHTML = versions.length
     ? versions.map((v) => `<div class="list-item"><b>${esc(v.name || v.id.slice(0, 8))}</b> <span class="muted">job: ${esc(v.job_id || "—")} · parent: ${esc(v.parent_id ? v.parent_id.slice(0, 8) : "母版")}</span></div>`).join("")
     : '<div class="muted">暂无简历版本。</div>';
+}
+
+async function generateInterviewPlan() {
+  const applicationId = el("iApplication").value;
+  if (!applicationId) return toast("请先选择投递记录", "err");
+  try {
+    const data = await api(`/interview-plans/generate?application_id=${encodeURIComponent(applicationId)}`, { method: "POST" });
+    el("interviewPlanResult").innerHTML = `
+      <div class="ok">已生成面试准备计划</div>
+      <div class="muted">主题 ${data.topics.length} 项 · 问题 ${data.questions.length} 题</div>
+      <pre class="code-block">${esc(JSON.stringify(data, null, 2))}</pre>`;
+  } catch (err) {
+    toast("生成失败：" + err.message, "err");
+  }
 }
 
 /* ---------- Offer 导入 ---------- */
@@ -498,6 +513,7 @@ async function init() {
   el("btnMatch").onclick = runMatch;
   el("btnAddApp").onclick = addApplication;
   el("btnFork").onclick = forkResume;
+  el("btnGenerateInterview").onclick = generateInterviewPlan;
   el("btnOfferPreview").onclick = previewOfferInPage;
   el("btnOfferDownload").onclick = downloadOfferReport;
   el("btnOfferWrite").onclick = writeOfferJobs;

@@ -15,6 +15,7 @@
     <button data-tab="match" class="tab">🎯 匹配</button>
     <button data-tab="pipeline" class="tab">📨 投递看板</button>
     <button data-tab="resume" class="tab">📄 简历版本</button>
+    <button data-tab="interview" class="tab">🧠 面试准备</button>
     <button data-tab="offer" class="tab">🛰️ Offer 导入</button>
   </nav>
 </header>
@@ -110,6 +111,17 @@
     <div class="card">
       <h2>版本列表</h2>
       <div id="resumeList"></div>
+    </div>
+  </section>
+
+  <section id="panel-interview" class="panel">
+    <div class="card">
+      <h2>面试准备计划</h2>
+      <div class="row">
+        <select id="iApplication"></select>
+        <button id="btnGenerateInterview" class="btn primary">生成准备计划</button>
+      </div>
+      <div id="interviewPlanResult" class="result"></div>
     </div>
   </section>
 

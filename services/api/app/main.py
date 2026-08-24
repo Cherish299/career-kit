@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.api.routers import application, job, match, offer, profile, resume
+from app.api.routers import application, interview, job, match, offer, profile, resume
 from app.core.config import settings
 import app.models  # noqa: F401  # 注册全部模型到 Base.metadata
 from app.db.base import Base
@@ -46,6 +46,7 @@ app.include_router(job.router, prefix="/api/jobs", tags=["job"])
 app.include_router(match.router, prefix="/api/matches", tags=["match"])
 app.include_router(resume.router, prefix="/api/resume-versions", tags=["resume"])
 app.include_router(application.router, prefix="/api/applications", tags=["application"])
+app.include_router(interview.router, prefix="/api/interview-plans", tags=["interview"])
 app.include_router(offer.router, prefix="/api/offer", tags=["offer"])
 
 # 前端静态文件（apps/web）：uvicorn app.main:app 后浏览器打开 http://127.0.0.1:8000

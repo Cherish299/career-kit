@@ -183,6 +183,37 @@ def test_job_and_match_flow(client):
     assert any(g for g in report["gaps"]) or any(s for s in report["strengths"])
 
 
+def test_interview_plan_generation_from_job_and_profile(client):
+    profile = client.post("/api/profiles", json={"resume_json": SAMPLE_RESUME}).json()
+    job = client.post(
+        "/api/jobs",
+        json={
+            "title": "AI 应用开发工程师（RAG/Agent）",
+            "location": "深圳",
+            "source": "manual",
+            "company_name": "面试科技",
+            "requirements": "熟悉 Python、FastAPI、RAG、向量检索、Agent、Neo4j",
+            "description": "负责 AI 应用后端与知识图谱能力建设",
+        },
+    ).json()
+    app = client.post(
+        "/api/applications",
+        json={"profile_id": profile["id"], "job_id": job["id"], "status": "discovered"},
+    ).json()
+
+    generated = client.post(f"/api/interview-plans/generate?application_id={app['id']}")
+    assert generated.status_code == 200, generated.text
+    data = generated.json()
+    assert data["application_id"] == app["id"]
+    assert len(data["topics"]) >= 2
+    assert any(topic["category"] == "rag" for topic in data["topics"])
+    assert any(question["category"] in {"rag", "agent", "behavior"} for question in data["questions"])
+
+    fetched = client.get(f"/api/interview-plans/{app['id']}")
+    assert fetched.status_code == 200
+    assert fetched.json()["id"] == data["id"]
+
+
 def test_application_state_machine_via_api(client):
     """#7：创建投递 → 状态机流转 + 事件溯源；非法转换 422。"""
     profile = client.post("/api/profiles", json={"resume_json": SAMPLE_RESUME}).json()
