@@ -117,6 +117,45 @@ def test_import_resume_kit_json(client):
     assert pref["graduate_year"] == "2027"
 
 
+def test_public_profile_returns_whitelisted_fields_only(client):
+    created = client.post(
+        "/api/profiles",
+        json={
+            "display_name": "张三",
+            "summary": "AI 应用开发候选人",
+            "visibility": "public",
+            "public_slug": "zhang-san-ai",
+            "public_fields": ["display_name", "summary", "skills", "projects"],
+            "experiences": [
+                {"type": "project", "title": "CareerOS", "organization": "个人项目", "content": "做求职工作台"},
+                {"type": "education", "title": "某大学", "organization": "计算机学院", "content": "本科"}
+            ],
+            "skills": [{"name": "后端", "items": "Python,FastAPI", "level": "熟练"}],
+            "preference": {"roles": ["AI 应用开发"], "salary_expectation": "30k"}
+        },
+    )
+    assert created.status_code == 201, created.text
+    profile = created.json()
+    assert profile["public_slug"] == "zhang-san-ai"
+
+    public = client.get("/api/profiles/public/zhang-san-ai")
+    assert public.status_code == 200, public.text
+    data = public.json()
+    assert data["display_name"] == "张三"
+    assert data["summary"] == "AI 应用开发候选人"
+    assert len(data["skills"]) == 1
+    assert len(data["experiences"]) == 1
+    assert data["experiences"][0]["title"] == "CareerOS"
+    assert "salary_expectation" not in str(data)
+
+    private = client.post(
+        "/api/profiles",
+        json={"display_name": "李四", "visibility": "private", "public_slug": "li-si"},
+    ).json()
+    missing = client.get("/api/profiles/public/li-si")
+    assert missing.status_code == 404
+
+
 def test_job_and_match_flow(client):
     """#4 + #5：录入 JD → 规则匹配 → 可解释报告。"""
     profile = client.post("/api/profiles", json={"resume_json": SAMPLE_RESUME}).json()

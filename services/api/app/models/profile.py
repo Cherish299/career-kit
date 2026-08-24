@@ -33,6 +33,8 @@ class Profile(Base):
     visibility: Mapped[str] = mapped_column(String(20), default="private")
     # 原始 Resume Kit JSON 导入快照（迁移与回滚用）
     resume_json: Mapped[dict | None] = mapped_column(JSONType, nullable=True)
+    public_slug: Mapped[str] = mapped_column(String(80), default="", index=True)
+    public_fields: Mapped[list] = mapped_column(JSONType, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, onupdate=_now)
 

@@ -78,9 +78,25 @@ async function renderProfiles() {
       <div class="list-item">
         <b>${esc(p.display_name)}</b>
         <span class="muted">${p.experiences.length} 条经历 · ${p.skills.length} 项技能 · 可见性 ${esc(p.visibility)}</span>
-        <span class="muted">偏好：${(p.preference ? p.preference.roles : []).join("、") || "未设置"}</span>
+        <span class="muted">公开 slug：${esc(p.public_slug || "未生成")} · 偏好：${(p.preference ? p.preference.roles : []).join("、") || "未设置"}</span>
       </div>`).join("")
     : '<div class="muted">暂无画像，先导入 Resume Kit JSON。</div>';
+}
+
+async function loadPublicProfile() {
+  const slug = el("publicSlugInput").value.trim();
+  if (!slug) return toast("请先输入公开 slug", "err");
+  try {
+    const data = await api(`/profiles/public/${encodeURIComponent(slug)}`);
+    el("publicProfileResult").innerHTML = `
+      <div class="ok">公开主页可访问：${esc(data.display_name || slug)}</div>
+      <div><b>${esc(data.display_name)}</b></div>
+      <div class="muted">${esc(data.summary || "")}</div>
+      <div class="muted">项目 ${data.experiences.length} 条 · 技能 ${data.skills.length} 项</div>
+      <pre class="code-block">${esc(JSON.stringify(data, null, 2))}</pre>`;
+  } catch (err) {
+    toast("公开页加载失败：" + err.message, "err");
+  }
 }
 
 /* ---------- 岗位 ---------- */
@@ -474,6 +490,7 @@ async function init() {
   initOfferForm();
   await loadOfferNavigations();
   el("btnImport").onclick = importProfile;
+  el("btnLoadPublicProfile").onclick = loadPublicProfile;
   el("btnAddJob").onclick = addJob;
   el("btnRefreshJobs").onclick = renderJobs;
   el("btnRefreshAlerts").onclick = renderJobAlerts;

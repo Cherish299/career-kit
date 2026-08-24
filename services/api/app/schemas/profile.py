@@ -64,6 +64,8 @@ class ProfileBase(BaseModel):
     display_name: str = ""
     summary: str = ""
     visibility: Literal["public", "shared", "private"] = "private"
+    public_slug: str = ""
+    public_fields: list[str] = Field(default_factory=list)
 
 
 class ProfileCreate(ProfileBase):
@@ -78,6 +80,8 @@ class ProfileUpdate(BaseModel):
     display_name: str | None = None
     summary: str | None = None
     visibility: Literal["public", "shared", "private"] | None = None
+    public_slug: str | None = None
+    public_fields: list[str] | None = None
 
 
 class ProfileRead(ProfileBase):
@@ -88,3 +92,25 @@ class ProfileRead(ProfileBase):
     experiences: list[ExperienceRead] = Field(default_factory=list)
     skills: list[SkillRead] = Field(default_factory=list)
     preference: PreferenceRead | None = None
+
+
+class PublicExperienceRead(BaseModel):
+    title: str = ""
+    organization: str = ""
+    role: str = ""
+    content: str = ""
+    type: str = "other"
+
+
+class PublicSkillRead(BaseModel):
+    name: str = ""
+    items: str = ""
+    level: str = ""
+
+
+class PublicProfileRead(BaseModel):
+    display_name: str = ""
+    summary: str = ""
+    public_slug: str = ""
+    experiences: list[PublicExperienceRead] = Field(default_factory=list)
+    skills: list[PublicSkillRead] = Field(default_factory=list)
