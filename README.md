@@ -9,15 +9,15 @@
 | 模块 | 能力 | 状态 |
 | --- | --- | --- |
 | 🎯 **个人中心 Profile Hub** | 统一职业画像、Resume Kit JSON 导入、基础隐私级别 | ✅ MVP 可用 |
-| 📡 **岗位雷达 Job Radar** | JD/URL 录入、官网采集预览、去重、可解释匹配、收藏/截止日期 | 🔄 M1-M2 之间 |
-| 📄 **材料工作室 Asset Studio** | 岗位定制简历版本、求职信、个人主页 | 🔄 简历副本已完成 |
-| 📨 **投递管线 Application Pipeline** | 状态看板、事件溯源、提醒、统计 | 🔄 状态机已完成，提醒待补 |
-| 🧠 **面试准备 Interview Kit** | 152 题题库、笔试/面试模拟、JD 定向准备 | 🔄 legacy 可独立使用，联动待接入 |
+| 📡 **岗位雷达 Job Radar** | JD/URL 录入、官网采集预览、去重、收藏、截止日期、同步提醒 | ✅ 第 6 周最小闭环已落地 |
+| 📄 **材料工作室 Asset Studio** | 岗位定制简历版本、求职信、个人主页 | 🔄 简历副本与公开主页 API 已落地 |
+| 📨 **投递管线 Application Pipeline** | 状态看板、事件溯源、提醒、统计 | 🔄 状态机已完成，统计待补 |
+| 🧠 **面试准备 Interview Kit** | 152 题题库、笔试/面试模拟、JD 定向准备 | 🔄 已接入 JD 规则映射与准备计划生成 |
 
-## 当前状态：M1 核心闭环已跑通，正在补第 6 周岗位生命周期
+## 当前状态：M1 已可演示，M2 已补到最小可运行闭环
 
-当前仓库已经能完成样例级闭环：`画像导入 → 岗位录入/采集预览 → 匹配分析 → 简历副本 → 投递状态机`。
-本轮继续补齐第 6 周岗位生命周期能力：岗位收藏、截止日期、stale 标记与首个 Alembic 迁移。
+当前仓库已经能完成样例级闭环：`画像导入 → 岗位录入/采集预览 → 匹配分析 → 简历副本 → 投递状态机 → JD 定向面试准备`。
+目前第 6-8 周已落地的最小能力包括：岗位同步提醒、公开主页只读 API、JD 关联面试准备计划；仍待继续补共享包、完整公开页、题库深度联动与发布物。
 
 现有两个成熟工具已作为 legacy 模块迁入：
 
@@ -29,7 +29,7 @@
 
 ```bash
 npm run build     # 构建两个工具 → legacy/*/dist/*.html（双击即用）
-npm run test      # 规则引擎单测 + 题库校验 + DOM 冒烟
+npm run test      # legacy + crawler + API 集成测试 + DOM 冒烟
 ```
 
 ## 快速开始（MVP 工作台：后端 + 前端一体）
@@ -51,9 +51,19 @@ $env:CAREER_DATABASE_URL="sqlite:///./services/api/dev.db"
 npm run dev
 ```
 
-浏览器打开 <http://127.0.0.1:8000>，用 `examples/sample-resume.json` 导入画像、`examples/sample-jobs.json` 录入岗位，即可体验完整闭环：**画像 → 岗位 → 匹配报告 → 投递看板 → 简历副本**。
+浏览器打开 <http://127.0.0.1:8000>，用 `examples/sample-resume.json` 导入画像、`examples/sample-jobs.json` 录入岗位，即可体验完整闭环：**画像 → 岗位 → 匹配报告 → 投递看板 → 简历副本 → 面试准备计划**。
 
 > 生产数据库：仓库根目录 `docker compose up -d` 启动 PostgreSQL。
+
+## 当前已落地的增量
+
+- `services/api/app/api/routers/job.py`：岗位收藏、deadline、stale、sync、alerts、sync runs
+- `services/api/app/api/routers/profile.py`：公开主页 slug、字段白名单、只读 public API
+- `services/api/app/api/routers/interview.py`：JD 关联面试准备计划生成与读取
+- `services/api/alembic/versions/46f046296328_initial_careeros_schema.py`：初始迁移
+- `services/api/alembic/versions/50de55dfebe4_add_job_alerts_and_sync_fields.py`：提醒迁移
+- `services/api/alembic/versions/6f6f4f975f1f_add_job_sync_runs_and_alert_dedupe.py`：同步日志与提醒去重迁移
+- `services/api/alembic/versions/8f8db1afcb51_add_public_profile_fields.py`：公开主页字段迁移
 
 ## 路线图
 
@@ -64,7 +74,7 @@ npm run dev
 ```
 career-kit/
 ├── apps/web              # 统一 Web 工作台（原生 JS MVP，规划迁移 React）
-├── services/api          # FastAPI 后端（Schema/CRUD/匹配/状态机，24 项测试）
+├── services/api          # FastAPI 后端（Schema/CRUD/匹配/状态机/公开主页/面试计划，35 项测试）
 ├── services/crawler      # 官网采集（第 5 周起）
 ├── packages/             # 共享包（profile-schema / resume-engine / job-matcher / interview-kit）
 ├── legacy/               # 现有工具（resume-kit / interview-kit）
