@@ -28,6 +28,12 @@ def test_experience_type_must_be_known():
         ExperienceCreate(type="hobby")
 
 
+def test_job_schema_accepts_favorite_and_deadline():
+    payload = JobCreate(source="crawler", external_id="x", is_favorite=True, deadline="2027-09-30")
+    assert payload.is_favorite is True
+    assert payload.deadline == "2027-09-30"
+
+
 def test_job_source_must_be_known():
     with pytest.raises(ValidationError):
         JobCreate(title="xx", source="rss")

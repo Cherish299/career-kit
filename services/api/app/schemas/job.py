@@ -31,7 +31,9 @@ class JobBase(BaseModel):
     source_url: str = ""
     source: Literal["manual", "url", "crawler"] = "manual"
     external_id: str = ""
-    status: Literal["active", "closed", "draft"] = "active"
+    status: Literal["active", "closed", "draft", "stale"] = "active"
+    is_favorite: bool = False
+    deadline: str = ""
 
 
 class JobCreate(JobBase):
@@ -45,7 +47,9 @@ class JobUpdate(BaseModel):
     requirements: str | None = None
     description: str | None = None
     source_url: str | None = None
-    status: Literal["active", "closed", "draft"] | None = None
+    status: Literal["active", "closed", "draft", "stale"] | None = None
+    is_favorite: bool | None = None
+    deadline: str | None = None
 
 
 class JobRead(JobBase):
@@ -55,6 +59,9 @@ class JobRead(JobBase):
     company_name: str = ""
     created_at: datetime
     updated_at: datetime
+    is_favorite: bool
+    deadline: str
+    last_seen_at: datetime | None = None
 
 
 class JobSnapshotRead(BaseModel):

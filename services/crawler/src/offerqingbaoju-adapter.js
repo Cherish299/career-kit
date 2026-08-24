@@ -77,6 +77,7 @@ export class OfferQingBaoJuAdapter extends SourceAdapter {
       title: title || raw["招聘公告"] || raw["企业名称"],
       company_name: raw["企业名称"],
       location: raw["工作地点"],
+      deadline: raw["截止时间"],
       description,
       requirements,
       status: "active",

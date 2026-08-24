@@ -178,6 +178,32 @@ def test_application_state_machine_via_api(client):
     assert frozen.status_code == 422
 
 
+def test_job_favorite_filter_and_stale_marker(client):
+    job = client.post(
+        "/api/jobs",
+        json={
+            "title": "收藏岗位",
+            "source": "crawler",
+            "external_id": "favorite-1",
+            "company_name": "收藏公司",
+            "deadline": "2027-09-30",
+        },
+    ).json()
+    assert job["is_favorite"] is False
+    toggled = client.patch(f"/api/jobs/{job['id']}/favorite")
+    assert toggled.status_code == 200
+    assert toggled.json()["is_favorite"] is True
+    favorite = client.get("/api/jobs?favorite=true")
+    assert favorite.status_code == 200
+    assert [row["id"] for row in favorite.json()] == [job["id"]]
+
+    stale = client.post("/api/jobs/mark-stale?max_age_hours=0")
+    assert stale.status_code == 200
+    assert stale.json()["changed"] == 1
+    assert client.get(f"/api/jobs/{job['id']}").json()["status"] == "stale"
+    assert client.get("/api/jobs?include_stale=false").json() == []
+
+
 def test_job_snapshots_are_created_and_deduplicated(client):
     job = client.post(
         "/api/jobs",

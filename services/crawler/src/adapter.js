@@ -39,6 +39,7 @@ export function normalizeJobRecord(record) {
     title: assertString(record.title, "title"),
     location: String(record.location || "").trim(),
     company_name: String(record.company_name || "").trim(),
+    deadline: String(record.deadline || "").trim(),
     description: String(record.description || "").trim(),
     requirements: String(record.requirements || "").trim(),
     status: String(record.status || "active").trim() || "active",

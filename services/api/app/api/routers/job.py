@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
@@ -72,6 +73,10 @@ def create_job(payload: JobCreate, db: Session = Depends(get_db)) -> Job:
         existing.description = payload.description
         existing.source_url = payload.source_url
         existing.status = payload.status
+        # Crawler upserts must not erase a user's favorite flag or an existing deadline.
+        if payload.deadline:
+            existing.deadline = payload.deadline
+        existing.last_seen_at = datetime.now(timezone.utc)
         _maybe_add_snapshot(db, existing, payload.description or payload.requirements)
         db.commit()
         db.refresh(existing)
@@ -85,7 +90,10 @@ def create_job(payload: JobCreate, db: Session = Depends(get_db)) -> Job:
         source_url=payload.source_url,
         source=payload.source,
         external_id=payload.external_id,
+        is_favorite=payload.is_favorite,
+        deadline=payload.deadline,
         status=payload.status,
+        last_seen_at=datetime.now(timezone.utc),
         company_id=_resolve_company_id(db, payload.company_id, payload.company_name),
     )
     db.add(job)
@@ -97,10 +105,19 @@ def create_job(payload: JobCreate, db: Session = Depends(get_db)) -> Job:
 
 
 @router.get("", response_model=list[JobRead])
-def list_jobs(status: str | None = None, db: Session = Depends(get_db)) -> list[Job]:
+def list_jobs(
+    status: str | None = None,
+    favorite: bool | None = None,
+    include_stale: bool = True,
+    db: Session = Depends(get_db),
+) -> list[Job]:
     stmt = select(Job).order_by(Job.created_at.desc())
     if status:
         stmt = stmt.where(Job.status == status)
+    if favorite is True:
+        stmt = stmt.where(Job.is_favorite.is_(True))
+    if not include_stale:
+        stmt = stmt.where(Job.status != "stale")
     return list(db.scalars(stmt))
 
 
@@ -110,6 +127,32 @@ def get_job(job_id: str, db: Session = Depends(get_db)) -> Job:
     if job is None:
         raise HTTPException(status_code=404, detail="岗位不存在")
     return job
+
+
+@router.patch("/{job_id}/favorite", response_model=JobRead)
+def toggle_job_favorite(job_id: str, db: Session = Depends(get_db)) -> Job:
+    job = db.get(Job, job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="岗位不存在")
+    job.is_favorite = not job.is_favorite
+    db.commit()
+    db.refresh(job)
+    return job
+
+
+@router.post("/mark-stale", response_model=dict)
+def mark_stale_jobs(max_age_hours: int = 168, db: Session = Depends(get_db)) -> dict:
+    """将超过 max_age_hours 未见的采集岗位标记为 stale；人工岗位不参与。"""
+    cutoff = datetime.now(timezone.utc).timestamp() - max_age_hours * 3600
+    jobs = list(db.scalars(select(Job).where(Job.source == "crawler", Job.status == "active")))
+    changed = 0
+    for job in jobs:
+        seen = job.last_seen_at or job.updated_at or job.created_at
+        if seen and seen.timestamp() < cutoff:
+            job.status = "stale"
+            changed += 1
+    db.commit()
+    return {"changed": changed, "checked": len(jobs), "max_age_hours": max_age_hours}
 
 
 @router.patch("/{job_id}", response_model=JobRead)

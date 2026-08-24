@@ -1,4 +1,4 @@
-"""Alembic 迁移环境：读取应用配置与模型元数据。"""
+"""Alembic migration environment for the application models."""
 from logging.config import fileConfig
 
 from alembic import context

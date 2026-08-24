@@ -28,6 +28,7 @@ test("normalizeJobRecord returns job payload for API", () => {
   assert.equal(row.source, "sample-board");
   assert.equal(row.external_id, "job-001");
   assert.equal(row.company_name, "示例科技公司");
+  assert.equal(row.deadline, "");
   assert.equal(row.status, "active");
 });
 
@@ -173,6 +174,7 @@ test("Offer 情报局 adapter maps mocked public API fields", async () => {
   assert.equal(normalizedRows[0].title, "机器学习工程师");
   assert.equal(normalizedRows[0].external_id, "60:7:1");
   assert.equal(normalizedRows[0].company_name, "公开样例公司");
+  assert.equal(normalizedRows[0].deadline, "招满为止");
   assert.equal(calls.length, 2);
   assert.match(calls[0], /per_page=10/);
 });

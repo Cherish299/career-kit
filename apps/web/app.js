@@ -88,6 +88,7 @@ async function addJob() {
   const payload = {
     title: el("jTitle").value.trim(),
     location: el("jLocation").value.trim(),
+    deadline: el("jDeadline").value.trim(),
     source_url: el("jUrl").value.trim(),
     requirements: el("jReq").value.trim(),
     source: el("jUrl").value.trim() ? "url" : "manual",
@@ -96,17 +97,28 @@ async function addJob() {
   if (!payload.title) return toast("请填写职位名称", "err");
   try {
     await api("/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    el("jTitle").value = ""; el("jReq").value = ""; el("jUrl").value = "";
+    el("jTitle").value = ""; el("jReq").value = ""; el("jUrl").value = ""; el("jDeadline").value = "";
     toast("岗位已保存");
     renderJobs(); refreshDropdowns();
   } catch (err) { toast("保存失败：" + err.message, "err"); }
 }
 
 async function renderJobs() {
-  const jobs = await api("/jobs");
+  const favorite = el("jobFavoriteOnly")?.checked;
+  const query = favorite ? "?favorite=true" : "";
+  const jobs = await api("/jobs" + query);
   el("jobList").innerHTML = jobs.length
-    ? jobs.map((j) => `<div class="list-item"><b>${esc(j.title)}</b> <span class="muted">${esc(j.company_name || "无公司")} · ${esc(j.location)} · ${esc(j.source)}</span></div>`).join("")
+    ? jobs.map((j) => `<div class="list-item"><b>${esc(j.title)}</b> <span class="muted">${esc(j.company_name || "无公司")} · ${esc(j.location)} · ${esc(j.source)} · ${esc(j.status)}${j.deadline ? ` · 截止 ${esc(j.deadline)}` : ""}</span><button class="btn small" data-fav-job="${esc(j.id)}">${j.is_favorite ? "★ 已收藏" : "☆ 收藏"}</button></div>`).join("")
     : '<div class="muted">暂无岗位，先录入 JD。</div>';
+  document.querySelectorAll("[data-fav-job]").forEach((button) => {
+    button.onclick = async () => {
+      try {
+        await api(`/jobs/${button.dataset.favJob}/favorite`, { method: "PATCH" });
+        renderJobs();
+        refreshDropdowns();
+      } catch (err) { toast("收藏失败：" + err.message, "err"); }
+    };
+  });
 }
 
 /* ---------- 匹配 ---------- */
@@ -236,7 +248,7 @@ function collectOfferConfig() {
 
 function buildOfferCommand(mode) {
   const cfg = collectOfferConfig();
-  const lines = ["cd C:\\Users\\hew\\career-kit\\services\\crawler"];
+  const lines = ["cd services/crawler"];
   const envPairs = [
     ["OFFER_PREVIEW_LIMIT", mode === "preview" ? cfg.limit : ""],
     ["OFFER_IMPORT_LIMIT", mode === "import" ? cfg.limit : ""],
@@ -443,6 +455,8 @@ async function init() {
   await loadOfferNavigations();
   el("btnImport").onclick = importProfile;
   el("btnAddJob").onclick = addJob;
+  el("btnRefreshJobs").onclick = renderJobs;
+  el("jobFavoriteOnly").onchange = renderJobs;
   el("btnMatch").onclick = runMatch;
   el("btnAddApp").onclick = addApplication;
   el("btnFork").onclick = forkResume;

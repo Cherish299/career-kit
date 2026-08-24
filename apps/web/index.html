@@ -43,6 +43,7 @@
         <label>公司 <input id="jCompany" placeholder="示例科技公司"></label>
         <label>职位 <input id="jTitle" placeholder="AI 应用开发工程师"></label>
         <label>地点 <input id="jLocation" placeholder="深圳"></label>
+        <label>截止日期 <input id="jDeadline" placeholder="2027-09-30 或 招满为止"></label>
         <label>来源 URL（可选）<input id="jUrl" placeholder="https://..."></label>
       </div>
       <label>JD 要求 <textarea id="jReq" rows="4" placeholder="熟悉 Python / FastAPI / RAG ..."></textarea></label>
@@ -50,7 +51,7 @@
       <div id="jobResult" class="result"></div>
     </div>
     <div class="card">
-      <h2>岗位列表</h2>
+      <div class="row"><h2>岗位列表</h2><label><input id="jobFavoriteOnly" type="checkbox"> 只看收藏</label><button id="btnRefreshJobs" class="btn">刷新</button></div>
       <div id="jobList"></div>
     </div>
   </section>
