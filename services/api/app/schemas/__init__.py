@@ -23,6 +23,7 @@ from app.schemas.job import (
     JobSnapshotRead,
     JobSyncRequest,
     JobSyncResponse,
+    JobSyncRunRead,
     JobUpdate,
 )
 from app.schemas.offer import OfferImportRequest, OfferImportResponse, OfferPreviewRequest, OfferPreviewResponse
@@ -57,6 +58,7 @@ __all__ = [
     "JobSnapshotRead",
     "JobSyncRequest",
     "JobSyncResponse",
+    "JobSyncRunRead",
     "JobUpdate",
     "MatchReportCreate",
     "MatchReportRead",

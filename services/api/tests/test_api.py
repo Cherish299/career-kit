@@ -204,7 +204,7 @@ def test_job_favorite_filter_and_stale_marker(client):
     assert client.get("/api/jobs?include_stale=false").json() == []
 
 
-def test_job_sync_creates_alerts_updates_and_closes_missing_favorites(client):
+def test_job_sync_creates_runs_dedupes_alerts_and_applies_deadline_threshold(client):
     created = client.post(
         "/api/jobs/sync",
         json={
@@ -223,7 +223,10 @@ def test_job_sync_creates_alerts_updates_and_closes_missing_favorites(client):
         },
     )
     assert created.status_code == 200, created.text
-    assert created.json() == {"created": 1, "updated": 0, "unchanged": 0, "closed": 0, "alerts_created": 0}
+    created_data = created.json()
+    assert created_data["created"] == 1
+    assert created_data["alerts_created"] == 0
+    assert created_data["run_id"]
 
     job = client.get("/api/jobs").json()[0]
     client.patch(f"/api/jobs/{job['id']}/favorite")
@@ -260,7 +263,7 @@ def test_job_sync_creates_alerts_updates_and_closes_missing_favorites(client):
                     "location": "深圳",
                     "requirements": "Python FastAPI Redis",
                     "description": "负责 RAG 应用开发与同步",
-                    "deadline": "2027-10-15",
+                    "deadline": "2026-08-30",
                 }
             ],
         },
@@ -273,6 +276,32 @@ def test_job_sync_creates_alerts_updates_and_closes_missing_favorites(client):
     assert alerts.status_code == 200
     data = alerts.json()
     assert {row["type"] for row in data} == {"updated", "deadline"}
+
+    rerun = client.post(
+        "/api/jobs/sync",
+        json={
+            "source": "crawler",
+            "deadline_days": 14,
+            "rows": [
+                {
+                    "external_id": "sync-1",
+                    "title": "AI 应用开发工程师",
+                    "company_name": "同步科技",
+                    "location": "深圳",
+                    "requirements": "Python FastAPI Redis",
+                    "description": "负责 RAG 应用开发与同步",
+                    "deadline": "2026-08-30",
+                }
+            ],
+        },
+    )
+    assert rerun.status_code == 200
+    assert rerun.json()["unchanged"] == 1
+    assert rerun.json()["alerts_created"] == 0
+
+    runs = client.get("/api/jobs/sync-runs?source=crawler")
+    assert runs.status_code == 200
+    assert len(runs.json()) >= 3
 
     marked = client.patch(f"/api/jobs/alerts/{data[0]['id']}", json={"read": True})
     assert marked.status_code == 200

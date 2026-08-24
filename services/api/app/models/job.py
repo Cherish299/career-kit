@@ -1,10 +1,10 @@
-"""岗位雷达：Company / Job / JobSnapshot / JobAlert。"""
+"""岗位雷达：Company / Job / JobSnapshot / JobAlert / JobSyncRun。"""
 from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -83,7 +83,23 @@ class JobAlert(Base):
     job_id: Mapped[str] = mapped_column(ForeignKey("jobs.id", ondelete="CASCADE"), index=True)
     type: Mapped[str] = mapped_column(String(20), index=True, default="updated")
     message: Mapped[str] = mapped_column(Text, default="")
+    dedupe_key: Mapped[str] = mapped_column(String(120), default="", index=True)
     read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
     job: Mapped[Job] = relationship(back_populates="alerts")
+
+
+class JobSyncRun(Base):
+    __tablename__ = "job_sync_runs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    source: Mapped[str] = mapped_column(String(20), index=True, default="crawler")
+    row_count: Mapped[int] = mapped_column(Integer, default=0)
+    created: Mapped[int] = mapped_column(Integer, default=0)
+    updated: Mapped[int] = mapped_column(Integer, default=0)
+    unchanged: Mapped[int] = mapped_column(Integer, default=0)
+    closed: Mapped[int] = mapped_column(Integer, default=0)
+    alerts_created: Mapped[int] = mapped_column(Integer, default=0)
+    triggered_by: Mapped[str] = mapped_column(String(30), default="manual")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)

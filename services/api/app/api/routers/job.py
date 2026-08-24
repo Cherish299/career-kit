@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
-from app.models import Company, Job, JobAlert, JobSnapshot
+from app.models import Company, Job, JobAlert, JobSnapshot, JobSyncRun
 from app.schemas import (
     JobAlertRead,
     JobAlertUpdate,
@@ -19,6 +19,7 @@ from app.schemas import (
     JobSnapshotRead,
     JobSyncRequest,
     JobSyncResponse,
+    JobSyncRunRead,
     JobUpdate,
 )
 
@@ -79,10 +80,25 @@ def _payload_raw_content(payload: JobCreate) -> str:
     return "\n\n".join(part.strip() for part in [payload.title, payload.location, payload.requirements, payload.description, payload.deadline] if part and part.strip())
 
 
-def _create_alert(db: Session, job: Job, alert_type: str, message: str) -> JobAlert:
-    alert = JobAlert(job_id=job.id, type=alert_type, message=message)
+def _create_alert(db: Session, job: Job, alert_type: str, message: str, dedupe_key: str) -> JobAlert | None:
+    existing = db.scalar(select(JobAlert).where(JobAlert.job_id == job.id, JobAlert.dedupe_key == dedupe_key))
+    if existing is not None:
+        return None
+    alert = JobAlert(job_id=job.id, type=alert_type, message=message, dedupe_key=dedupe_key)
     db.add(alert)
     return alert
+
+
+def _parse_deadline_text(deadline: str) -> datetime | None:
+    deadline = (deadline or "").strip()
+    if not deadline or any(token in deadline for token in ["招满", "尽快", "长期"]):
+        return None
+    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%Y.%m.%d"):
+        try:
+            return datetime.strptime(deadline, fmt).replace(tzinfo=timezone.utc)
+        except ValueError:
+            continue
+    return None
 
 
 @router.post("", response_model=JobRead, status_code=201)
@@ -157,6 +173,7 @@ def list_job_alerts(unread_only: bool = False, db: Session = Depends(get_db)) ->
             job_id=alert.job_id,
             type=alert.type,
             message=alert.message,
+            dedupe_key=alert.dedupe_key,
             read_at=alert.read_at,
             created_at=alert.created_at,
             job_title=alert.job.title if alert.job else "",
@@ -178,10 +195,19 @@ def mark_job_alert(alert_id: str, payload: JobAlertUpdate, db: Session = Depends
         job_id=alert.job_id,
         type=alert.type,
         message=alert.message,
+        dedupe_key=alert.dedupe_key,
         read_at=alert.read_at,
         created_at=alert.created_at,
         job_title=alert.job.title if alert.job else "",
     )
+
+
+@router.get("/sync-runs", response_model=list[JobSyncRunRead])
+def list_job_sync_runs(source: str | None = None, db: Session = Depends(get_db)) -> list[JobSyncRun]:
+    stmt = select(JobSyncRun).order_by(JobSyncRun.created_at.desc())
+    if source:
+        stmt = stmt.where(JobSyncRun.source == source)
+    return list(db.scalars(stmt))
 
 
 @router.post("/sync", response_model=JobSyncResponse)
@@ -237,11 +263,12 @@ def sync_jobs(payload: JobSyncRequest, db: Session = Depends(get_db)) -> JobSync
 
         _maybe_add_snapshot(db, existing, raw_content)
         updated += 1
-        _create_alert(db, existing, "updated", f"岗位「{existing.title}」内容已更新")
-        alerts_created += 1
-        if incoming.deadline:
-            _create_alert(db, existing, "deadline", f"岗位「{existing.title}」截止日期：{incoming.deadline}")
+        if _create_alert(db, existing, "updated", f"岗位「{existing.title}」内容已更新", f"updated:{content_hash}") is not None:
             alerts_created += 1
+        deadline_at = _parse_deadline_text(incoming.deadline)
+        if deadline_at and 0 <= (deadline_at - now).days <= payload.deadline_days:
+            if _create_alert(db, existing, "deadline", f"岗位「{existing.title}」即将截止：{incoming.deadline}", f"deadline:{incoming.deadline}") is not None:
+                alerts_created += 1
 
     if payload.stale_missing_favorites:
         favorite_jobs = list(db.scalars(select(Job).where(Job.source == payload.source, Job.is_favorite.is_(True))))
@@ -249,11 +276,23 @@ def sync_jobs(payload: JobSyncRequest, db: Session = Depends(get_db)) -> JobSync
             if job.external_id and job.external_id not in seen_external_ids and job.status != "closed":
                 job.status = "closed"
                 closed += 1
-                _create_alert(db, job, "closed", f"收藏岗位「{job.title}」本次同步未出现，已标记为 closed")
-                alerts_created += 1
+                if _create_alert(db, job, "closed", f"收藏岗位「{job.title}」本次同步未出现，已标记为 closed", f"closed:{job.external_id}") is not None:
+                    alerts_created += 1
 
+    run = JobSyncRun(
+        source=payload.source,
+        row_count=len(payload.rows),
+        created=created,
+        updated=updated,
+        unchanged=unchanged,
+        closed=closed,
+        alerts_created=alerts_created,
+        triggered_by=payload.triggered_by,
+    )
+    db.add(run)
     db.commit()
-    return JobSyncResponse(created=created, updated=updated, unchanged=unchanged, closed=closed, alerts_created=alerts_created)
+    db.refresh(run)
+    return JobSyncResponse(created=created, updated=updated, unchanged=unchanged, closed=closed, alerts_created=alerts_created, run_id=run.id)
 
 
 @router.get("/{job_id}", response_model=JobRead)

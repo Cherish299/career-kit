@@ -82,6 +82,7 @@ class JobAlertRead(BaseModel):
     job_id: str
     type: str
     message: str
+    dedupe_key: str = ""
     read_at: datetime | None = None
     created_at: datetime
     job_title: str = ""
@@ -107,6 +108,8 @@ class JobSyncRequest(BaseModel):
     source: str = "crawler"
     rows: list[JobSyncRow] = Field(default_factory=list)
     stale_missing_favorites: bool = True
+    deadline_days: int = 14
+    triggered_by: str = "manual"
 
 
 class JobSyncResponse(BaseModel):
@@ -115,3 +118,18 @@ class JobSyncResponse(BaseModel):
     unchanged: int
     closed: int
     alerts_created: int
+    run_id: str
+
+
+class JobSyncRunRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    source: str
+    row_count: int
+    created: int
+    updated: int
+    unchanged: int
+    closed: int
+    alerts_created: int
+    triggered_by: str
+    created_at: datetime
