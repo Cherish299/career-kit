@@ -1,4 +1,4 @@
-"""岗位雷达：Company / Job / JobSnapshot。"""
+"""岗位雷达：Company / Job / JobSnapshot / JobAlert。"""
 from __future__ import annotations
 
 import uuid
@@ -56,6 +56,7 @@ class Job(Base):
 
     company: Mapped[Company | None] = relationship(back_populates="jobs")
     snapshots: Mapped[list[JobSnapshot]] = relationship(back_populates="job", cascade="all, delete-orphan")
+    alerts: Mapped[list[JobAlert]] = relationship(back_populates="job", cascade="all, delete-orphan")
 
     @property
     def company_name(self) -> str:
@@ -73,3 +74,16 @@ class JobSnapshot(Base):
     captured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
     job: Mapped[Job] = relationship(back_populates="snapshots")
+
+
+class JobAlert(Base):
+    __tablename__ = "job_alerts"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    job_id: Mapped[str] = mapped_column(ForeignKey("jobs.id", ondelete="CASCADE"), index=True)
+    type: Mapped[str] = mapped_column(String(20), index=True, default="updated")
+    message: Mapped[str] = mapped_column(Text, default="")
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+    job: Mapped[Job] = relationship(back_populates="alerts")

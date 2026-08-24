@@ -115,8 +115,28 @@ async function renderJobs() {
       try {
         await api(`/jobs/${button.dataset.favJob}/favorite`, { method: "PATCH" });
         renderJobs();
+        renderJobAlerts();
         refreshDropdowns();
       } catch (err) { toast("收藏失败：" + err.message, "err"); }
+    };
+  });
+}
+
+async function renderJobAlerts() {
+  const alerts = await api("/jobs/alerts?unread_only=true");
+  el("jobAlertList").innerHTML = alerts.length
+    ? alerts.map((a) => `<div class="list-item"><b>${esc(a.type)}</b> <span class="muted">${esc(a.job_title || a.job_id)} · ${esc(a.message)}</span><button class="btn small" data-alert-id="${esc(a.id)}">标记已读</button></div>`).join("")
+    : '<div class="muted">暂无未读提醒。</div>';
+  document.querySelectorAll("[data-alert-id]").forEach((button) => {
+    button.onclick = async () => {
+      try {
+        await api(`/jobs/alerts/${button.dataset.alertId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ read: true }),
+        });
+        renderJobAlerts();
+      } catch (err) { toast("提醒更新失败：" + err.message, "err"); }
     };
   });
 }
@@ -456,6 +476,7 @@ async function init() {
   el("btnImport").onclick = importProfile;
   el("btnAddJob").onclick = addJob;
   el("btnRefreshJobs").onclick = renderJobs;
+  el("btnRefreshAlerts").onclick = renderJobAlerts;
   el("jobFavoriteOnly").onchange = renderJobs;
   el("btnMatch").onclick = runMatch;
   el("btnAddApp").onclick = addApplication;
@@ -472,7 +493,7 @@ async function init() {
   });
   try {
     await refreshDropdowns();
-    renderProfiles(); renderJobs(); renderPipeline(); renderResumeVersions();
+    renderProfiles(); renderJobs(); renderJobAlerts(); renderPipeline(); renderResumeVersions();
   } catch (err) {
     toast("后端未就绪：" + err.message, "err");
   }

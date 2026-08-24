@@ -204,6 +204,86 @@ def test_job_favorite_filter_and_stale_marker(client):
     assert client.get("/api/jobs?include_stale=false").json() == []
 
 
+def test_job_sync_creates_alerts_updates_and_closes_missing_favorites(client):
+    created = client.post(
+        "/api/jobs/sync",
+        json={
+            "source": "crawler",
+            "rows": [
+                {
+                    "external_id": "sync-1",
+                    "title": "AI 应用开发工程师",
+                    "company_name": "同步科技",
+                    "location": "深圳",
+                    "requirements": "Python FastAPI",
+                    "description": "负责 RAG 应用开发",
+                    "deadline": "2027-09-30",
+                }
+            ],
+        },
+    )
+    assert created.status_code == 200, created.text
+    assert created.json() == {"created": 1, "updated": 0, "unchanged": 0, "closed": 0, "alerts_created": 0}
+
+    job = client.get("/api/jobs").json()[0]
+    client.patch(f"/api/jobs/{job['id']}/favorite")
+
+    unchanged = client.post(
+        "/api/jobs/sync",
+        json={
+            "source": "crawler",
+            "rows": [
+                {
+                    "external_id": "sync-1",
+                    "title": "AI 应用开发工程师",
+                    "company_name": "同步科技",
+                    "location": "深圳",
+                    "requirements": "Python FastAPI",
+                    "description": "负责 RAG 应用开发",
+                    "deadline": "2027-09-30",
+                }
+            ],
+        },
+    )
+    assert unchanged.status_code == 200
+    assert unchanged.json()["unchanged"] == 1
+
+    updated = client.post(
+        "/api/jobs/sync",
+        json={
+            "source": "crawler",
+            "rows": [
+                {
+                    "external_id": "sync-1",
+                    "title": "AI 应用开发工程师",
+                    "company_name": "同步科技",
+                    "location": "深圳",
+                    "requirements": "Python FastAPI Redis",
+                    "description": "负责 RAG 应用开发与同步",
+                    "deadline": "2027-10-15",
+                }
+            ],
+        },
+    )
+    assert updated.status_code == 200
+    assert updated.json()["updated"] == 1
+    assert updated.json()["alerts_created"] == 2
+
+    alerts = client.get("/api/jobs/alerts?unread_only=true")
+    assert alerts.status_code == 200
+    data = alerts.json()
+    assert {row["type"] for row in data} == {"updated", "deadline"}
+
+    marked = client.patch(f"/api/jobs/alerts/{data[0]['id']}", json={"read": True})
+    assert marked.status_code == 200
+    assert marked.json()["read_at"] is not None
+
+    closed = client.post("/api/jobs/sync", json={"source": "crawler", "rows": []})
+    assert closed.status_code == 200
+    assert closed.json()["closed"] == 1
+    assert client.get(f"/api/jobs/{job['id']}").json()["status"] == "closed"
+
+
 def test_job_snapshots_are_created_and_deduplicated(client):
     job = client.post(
         "/api/jobs",
@@ -222,7 +302,7 @@ def test_job_snapshots_are_created_and_deduplicated(client):
     assert len(rows) == 1
     assert rows[0]["content_hash"]
 
-    same = client.post(f"/api/jobs/{job['id']}/snapshots", json={"raw_content": "负责官网岗位采集与结构化解析"})
+    same = client.post(f"/api/jobs/{job['id']}/snapshots", json={"raw_content": "Python 爬虫工程师\n\n深圳\n\n负责官网岗位采集与结构化解析"})
     assert same.status_code == 201
     assert same.json()["id"] == rows[0]["id"]
 

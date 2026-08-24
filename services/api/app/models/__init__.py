@@ -10,7 +10,7 @@ from app.models.application import (
     validate_transition,
 )
 from app.models.interview import InterviewPlan
-from app.models.job import Company, Job, JobSnapshot
+from app.models.job import Company, Job, JobAlert, JobSnapshot
 from app.models.match import MatchReport
 from app.models.profile import Experience, Preference, Profile, Skill
 from app.models.resume import ResumeVersion
@@ -27,6 +27,7 @@ __all__ = [
     "InterviewPlan",
     "InvalidTransitionError",
     "Job",
+    "JobAlert",
     "JobSnapshot",
     "MatchReport",
     "Preference",

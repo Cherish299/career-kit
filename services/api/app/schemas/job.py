@@ -74,3 +74,44 @@ class JobSnapshotRead(BaseModel):
 
 class JobSnapshotCreate(BaseModel):
     raw_content: str
+
+
+class JobAlertRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    job_id: str
+    type: str
+    message: str
+    read_at: datetime | None = None
+    created_at: datetime
+    job_title: str = ""
+
+
+class JobAlertUpdate(BaseModel):
+    read: bool = True
+
+
+class JobSyncRow(BaseModel):
+    title: str = ""
+    location: str = ""
+    requirements: str = ""
+    description: str = ""
+    source_url: str = ""
+    source: str = "crawler"
+    external_id: str
+    company_name: str | None = None
+    deadline: str = ""
+
+
+class JobSyncRequest(BaseModel):
+    source: str = "crawler"
+    rows: list[JobSyncRow] = Field(default_factory=list)
+    stale_missing_favorites: bool = True
+
+
+class JobSyncResponse(BaseModel):
+    created: int
+    updated: int
+    unchanged: int
+    closed: int
+    alerts_created: int
