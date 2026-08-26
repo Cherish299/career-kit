@@ -61,6 +61,7 @@ def _to_public_profile(profile: Profile) -> PublicProfileRead:
         display_name=profile.display_name if "display_name" in fields else "",
         summary=profile.summary if "summary" in fields else "",
         public_slug=profile.public_slug,
+        roles=list(profile.preference.roles) if profile.preference else [],
         experiences=experiences,
         skills=skills,
     )
@@ -114,7 +115,11 @@ def list_profiles(db: Session = Depends(get_db)) -> list[Profile]:
 def get_public_profile(slug: str, db: Session = Depends(get_db)) -> PublicProfileRead:
     profile = db.scalar(
         select(Profile)
-        .options(selectinload(Profile.experiences), selectinload(Profile.skills))
+        .options(
+            selectinload(Profile.experiences),
+            selectinload(Profile.skills),
+            selectinload(Profile.preference),
+        )
         .where(Profile.public_slug == slug, Profile.visibility.in_(["public", "shared"]))
     )
     if profile is None:

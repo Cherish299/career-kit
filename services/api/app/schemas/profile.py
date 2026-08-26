@@ -112,5 +112,6 @@ class PublicProfileRead(BaseModel):
     display_name: str = ""
     summary: str = ""
     public_slug: str = ""
+    roles: list[str] = Field(default_factory=list)
     experiences: list[PublicExperienceRead] = Field(default_factory=list)
     skills: list[PublicSkillRead] = Field(default_factory=list)

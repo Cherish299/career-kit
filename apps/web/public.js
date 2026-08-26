@@ -14,6 +14,30 @@ function renderList(id, items, renderItem, emptyText) {
   node.innerHTML = items.length ? items.map(renderItem).join("") : `<div class="muted">${esc(emptyText)}</div>`;
 }
 
+function renderRoles(roles) {
+  const node = document.getElementById("publicRoles");
+  if (!roles || !roles.length) {
+    node.innerHTML = "";
+    return;
+  }
+  node.innerHTML = roles.map((role) => `<span class="chip">${esc(role)}</span>`).join("");
+}
+
+async function copyCurrentLink() {
+  const url = window.location.href;
+  try {
+    await navigator.clipboard.writeText(url);
+    const btn = document.getElementById("btnCopyPublicLink");
+    const old = btn.textContent;
+    btn.textContent = "已复制 ✓";
+    setTimeout(() => { btn.textContent = old; }, 1600);
+  } catch {
+    const btn = document.getElementById("btnCopyPublicLink");
+    btn.textContent = "复制失败";
+    setTimeout(() => { btn.textContent = "复制当前页链接"; }, 1600);
+  }
+}
+
 async function loadPublicProfile() {
   const slug = getSlug();
   if (!slug) {
@@ -32,6 +56,7 @@ async function loadPublicProfile() {
   document.title = `${data.display_name || slug} · CareerOS Public Profile`;
   document.getElementById("publicName").textContent = data.display_name || slug;
   document.getElementById("publicSummary").textContent = data.summary || "这位候选人暂未填写公开简介。";
+  renderRoles(data.roles || []);
   document.getElementById("publicMeta").textContent = `公开项目 ${data.experiences.length} 条 · 公开技能 ${data.skills.length} 项`;
 
   renderList(
@@ -49,6 +74,7 @@ async function loadPublicProfile() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("btnCopyPublicLink").addEventListener("click", copyCurrentLink);
   loadPublicProfile().catch((error) => {
     document.getElementById("publicName").textContent = "加载失败";
     document.getElementById("publicSummary").textContent = error.message;

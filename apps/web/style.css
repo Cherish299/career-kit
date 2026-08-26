@@ -63,6 +63,9 @@ textarea { resize: vertical; }
 .public-item h3 { margin: 0 0 6px; font-size: 16px; }
 .public-item p { margin: 8px 0 0; line-height: 1.7; color: var(--text); }
 .public-hero, .public-item { overflow-wrap: anywhere; }
+.public-nav { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px; }
+.chip { background: var(--card); border: 1px solid var(--primary); color: var(--primary); border-radius: 999px; padding: 4px 12px; font-size: 12.5px; }
 @media (max-width: 720px) {
   .topbar { padding: 12px 14px; gap: 12px; align-items: flex-start; flex-direction: column; }
   .tabs { width: 100%; overflow-x: auto; padding-bottom: 4px; }

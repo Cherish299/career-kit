@@ -178,6 +178,7 @@ def test_public_profile_returns_whitelisted_fields_only(client):
     assert len(data["experiences"]) == 1
     assert data["experiences"][0]["title"] == "CareerOS"
     assert "salary_expectation" not in str(data)
+    assert "AI 应用开发" in data["roles"]
 
     private = client.post(
         "/api/profiles",
@@ -239,6 +240,11 @@ def test_interview_plan_generation_from_job_and_profile(client):
     assert len(data["topics"]) >= 2
     assert any(topic["category"] == "rag" for topic in data["topics"])
     assert any(question["category"] in {"rag", "agent", "behavior"} for question in data["questions"])
+    # 第 8 周深化：问题必须来自 legacy 题库（id 形如 rag-xxx / ml-xxx / behavior-xxx），不再内置手写
+    assert any(
+        question["question_id"].startswith(("rag-", "agent-", "llm-", "kg-", "ml-", "behavior-", "proj-"))
+        for question in data["questions"]
+    )
 
     fetched = client.get(f"/api/interview-plans/{app['id']}")
     assert fetched.status_code == 200
