@@ -129,6 +129,21 @@ async function savePublicProfileSettings() {
   }
 }
 
+function getPublicProfileUrl(slug) {
+  return `${window.location.origin}/public/${encodeURIComponent(slug)}`;
+}
+
+async function copyPublicProfileLink() {
+  const slug = el("publicSlugInput").value.trim();
+  if (!slug) return toast("请先输入公开 slug", "err");
+  try {
+    await navigator.clipboard.writeText(getPublicProfileUrl(slug));
+    toast("公开链接已复制");
+  } catch (err) {
+    toast("复制失败：" + err.message, "err");
+  }
+}
+
 async function loadPublicProfile() {
   const slug = el("publicSlugInput").value.trim();
   if (!slug) return toast("请先输入公开 slug", "err");
@@ -147,7 +162,7 @@ async function loadPublicProfile() {
       <div><b>${esc(data.display_name)}</b></div>
       <div class="muted">${esc(data.summary || "")}</div>
       <div class="muted">项目 ${data.experiences.length} 条 · 技能 ${data.skills.length} 项</div>
-      <div class="row"><a class="btn" href="/public/${encodeURIComponent(slug)}" target="_blank" rel="noreferrer">打开独立公开页</a></div>
+      <div class="row"><a class="btn" href="${esc(getPublicProfileUrl(slug))}" target="_blank" rel="noreferrer">打开独立公开页</a></div>
       <pre class="code-block">${esc(JSON.stringify(data, null, 2))}</pre>`;
   } catch (err) {
     toast("公开页加载失败：" + err.message, "err");
@@ -561,6 +576,7 @@ async function init() {
   el("btnImport").onclick = importProfile;
   el("btnSavePublicProfile").onclick = savePublicProfileSettings;
   el("btnLoadPublicProfile").onclick = loadPublicProfile;
+  el("btnCopyPublicLink").onclick = copyPublicProfileLink;
   el("publicProfileSelect").onchange = () => renderProfiles();
   el("btnAddJob").onclick = addJob;
   el("btnRefreshJobs").onclick = renderJobs;

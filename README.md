@@ -53,6 +53,13 @@ npm run dev
 
 浏览器打开 <http://127.0.0.1:8000>，用 `examples/sample-resume.json` 导入画像、`examples/sample-jobs.json` 录入岗位，即可体验完整闭环：**画像 → 岗位 → 匹配报告 → 投递看板 → 简历副本 → 面试准备计划**。
 
+公开主页使用方式：
+
+- 在“个人中心”选择一个画像
+- 设置 `visibility` 为 `shared` 或 `public`
+- 配置 `public slug` 与公开字段复选框
+- 点击“保存公开设置”后，可直接打开 `/public/{slug}` 或复制分享链接
+
 > 生产数据库：仓库根目录 `docker compose up -d` 启动 PostgreSQL。
 
 ## 当前已落地的增量
