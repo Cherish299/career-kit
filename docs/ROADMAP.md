@@ -41,6 +41,6 @@
 | 模块 | 位置 | 能力 | 测试 |
 | --- | --- | --- | --- |
 | 简历工作台 | `legacy/resume-kit` | 简历编辑/模板/预览/体检/求职台/AI 优化 | `node scripts/test-engine.js` |
-| AI 刷题 | `legacy/interview-kit` | 152 题题库/笔试面试模拟/统计/个性化方案 | `node scripts/test-data.js` |
+| AI 刷题 | `legacy/interview-kit` | 210 题题库（152 核心校验）/笔试面试模拟/统计/个性化方案 | `node scripts/test-data.js` |
 
 两个模块的构建：`node scripts/build.js`（纯 Node，无依赖），产物为单文件 HTML（`resume-workbench.html` / `interview-kit.html`）。

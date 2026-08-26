@@ -1,0 +1,2352 @@
+[
+  {
+    "id": "ml-001",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 1,
+    "q": "下列哪一项**不是**缓解过拟合（overfitting）的有效手段？",
+    "tags": [
+      "过拟合",
+      "正则化"
+    ]
+  },
+  {
+    "id": "ml-002",
+    "cat": "ml",
+    "type": "short",
+    "diff": 1,
+    "q": "请解释偏差-方差权衡（Bias-Variance Tradeoff）。",
+    "tags": [
+      "偏差方差",
+      "泛化"
+    ]
+  },
+  {
+    "id": "ml-003",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 1,
+    "q": "分类任务中，相比 MSE，交叉熵损失（Cross-Entropy）的突出优势是：",
+    "tags": [
+      "损失函数",
+      "交叉熵"
+    ]
+  },
+  {
+    "id": "ml-004",
+    "cat": "ml",
+    "type": "judge",
+    "diff": 2,
+    "q": "类别极度不均衡时，PR 曲线通常比 ROC 曲线更能反映少数类（正类）的性能。",
+    "tags": [
+      "评估指标",
+      "不均衡"
+    ]
+  },
+  {
+    "id": "ml-005",
+    "cat": "ml",
+    "type": "short",
+    "diff": 2,
+    "q": "解释 ROC 曲线与 AUC，并说明 AUC 的物理含义。",
+    "tags": [
+      "评估指标",
+      "AUC"
+    ]
+  },
+  {
+    "id": "ml-006",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 1,
+    "q": "SVM 中引入核函数（Kernel）的主要作用是：",
+    "tags": [
+      "SVM",
+      "核函数"
+    ]
+  },
+  {
+    "id": "ml-007",
+    "cat": "ml",
+    "type": "short",
+    "diff": 2,
+    "q": "L1 与 L2 正则化的区别？为什么 L1 会产生稀疏解？",
+    "tags": [
+      "正则化",
+      "稀疏性"
+    ]
+  },
+  {
+    "id": "ml-008",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 1,
+    "q": "梯度下降中学习率（learning rate）设置过大的后果是：",
+    "tags": [
+      "优化器",
+      "学习率"
+    ]
+  },
+  {
+    "id": "ml-009",
+    "cat": "ml",
+    "type": "short",
+    "diff": 1,
+    "q": "什么是 K 折交叉验证（K-Fold CV）？它的作用是什么？",
+    "tags": [
+      "交叉验证",
+      "评估"
+    ]
+  },
+  {
+    "id": "ml-010",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 1,
+    "q": "随机森林（Random Forest）属于哪种集成策略？它主要降低的是模型的哪部分误差？",
+    "tags": [
+      "集成学习",
+      "随机森林"
+    ]
+  },
+  {
+    "id": "ml-011",
+    "cat": "ml",
+    "type": "short",
+    "diff": 2,
+    "q": "GBDT / XGBoost 与随机森林的核心区别？",
+    "tags": [
+      "集成学习",
+      "GBDT",
+      "XGBoost"
+    ]
+  },
+  {
+    "id": "ml-012",
+    "cat": "ml",
+    "type": "judge",
+    "diff": 2,
+    "q": "XGBoost 在目标函数中使用了一阶与二阶导数（泰勒展开），并内置了缺失值处理。",
+    "tags": [
+      "XGBoost"
+    ]
+  },
+  {
+    "id": "ml-013",
+    "cat": "ml",
+    "type": "short",
+    "diff": 2,
+    "q": "Softmax 的数值稳定性问题如何解决？",
+    "tags": [
+      "Softmax",
+      "数值稳定"
+    ]
+  },
+  {
+    "id": "ml-014",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 1,
+    "q": "逻辑回归（Logistic Regression）输出 sigmoid(z) 的值域是：",
+    "tags": [
+      "逻辑回归"
+    ]
+  },
+  {
+    "id": "ml-015",
+    "cat": "ml",
+    "type": "short",
+    "diff": 1,
+    "q": "特征工程中，如何处理缺失值和类别特征？",
+    "tags": [
+      "特征工程"
+    ]
+  },
+  {
+    "id": "ml-016",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 1,
+    "q": "PCA（主成分分析）的本质是：",
+    "tags": [
+      "PCA",
+      "降维"
+    ]
+  },
+  {
+    "id": "ml-017",
+    "cat": "ml",
+    "type": "short",
+    "diff": 1,
+    "q": "为什么训练前通常要对特征做标准化/归一化？",
+    "tags": [
+      "特征工程",
+      "标准化"
+    ]
+  },
+  {
+    "id": "ml-018",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 2,
+    "q": "Precision（查准率）与 Recall（查全率）的正确定义是：",
+    "tags": [
+      "评估指标"
+    ]
+  },
+  {
+    "id": "ml-019",
+    "cat": "ml",
+    "type": "short",
+    "diff": 2,
+    "q": "什么时候应该优先关注 PR 曲线而不是 ROC？",
+    "tags": [
+      "评估指标",
+      "不均衡"
+    ]
+  },
+  {
+    "id": "ml-020",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 2,
+    "q": "K-Means 聚类的已知缺点不包括：",
+    "tags": [
+      "K-Means",
+      "聚类"
+    ]
+  },
+  {
+    "id": "ml-021",
+    "cat": "ml",
+    "type": "short",
+    "diff": 1,
+    "q": "KNN 和 K-Means 有什么区别？",
+    "tags": [
+      "KNN",
+      "聚类"
+    ]
+  },
+  {
+    "id": "ml-022",
+    "cat": "ml",
+    "type": "judge",
+    "diff": 1,
+    "q": "交叉验证既能用于模型评估，也能用于超参数调优（如网格搜索）。",
+    "tags": [
+      "交叉验证",
+      "调参"
+    ]
+  },
+  {
+    "id": "dl-023",
+    "cat": "dl",
+    "type": "choice",
+    "diff": 1,
+    "q": "下列哪项**不是**缓解梯度消失/梯度爆炸的有效手段？",
+    "tags": [
+      "梯度消失",
+      "初始化"
+    ]
+  },
+  {
+    "id": "dl-024",
+    "cat": "dl",
+    "type": "short",
+    "diff": 1,
+    "q": "为什么 ReLU 比 Sigmoid 更常用？ReLU 死亡问题是什么？",
+    "tags": [
+      "激活函数",
+      "ReLU"
+    ]
+  },
+  {
+    "id": "dl-025",
+    "cat": "dl",
+    "type": "short",
+    "diff": 2,
+    "q": "BatchNorm 的原理与作用？训练与推理时有什么差异？",
+    "tags": [
+      "BatchNorm",
+      "归一化"
+    ]
+  },
+  {
+    "id": "dl-026",
+    "cat": "dl",
+    "type": "choice",
+    "diff": 2,
+    "q": "LayerNorm 与 BatchNorm 的核心区别是：",
+    "tags": [
+      "归一化",
+      "LayerNorm"
+    ]
+  },
+  {
+    "id": "dl-027",
+    "cat": "dl",
+    "type": "short",
+    "diff": 2,
+    "q": "Dropout 的原理？训练和推理时的行为差异？",
+    "tags": [
+      "Dropout",
+      "正则化"
+    ]
+  },
+  {
+    "id": "dl-028",
+    "cat": "dl",
+    "type": "choice",
+    "diff": 2,
+    "q": "下列哪种方式**不能**增大 CNN 的感受野？",
+    "tags": [
+      "CNN",
+      "感受野"
+    ]
+  },
+  {
+    "id": "dl-029",
+    "cat": "dl",
+    "type": "short",
+    "diff": 2,
+    "q": "1×1 卷积有什么作用？",
+    "tags": [
+      "CNN",
+      "1x1卷积"
+    ]
+  },
+  {
+    "id": "dl-030",
+    "cat": "dl",
+    "type": "choice",
+    "diff": 1,
+    "q": "LSTM 的三个门分别是：",
+    "tags": [
+      "RNN",
+      "LSTM"
+    ]
+  },
+  {
+    "id": "dl-031",
+    "cat": "dl",
+    "type": "short",
+    "diff": 2,
+    "q": "为什么 Transformer 能取代 RNN/LSTM 成为主流序列模型？",
+    "tags": [
+      "Transformer",
+      "RNN"
+    ]
+  },
+  {
+    "id": "dl-032",
+    "cat": "dl",
+    "type": "choice",
+    "diff": 1,
+    "q": "Adam 优化器结合了哪两种思想？",
+    "tags": [
+      "优化器",
+      "Adam"
+    ]
+  },
+  {
+    "id": "dl-033",
+    "cat": "dl",
+    "type": "short",
+    "diff": 2,
+    "q": "训练中学习率 warmup 与余弦退火（cosine decay）分别解决什么问题？",
+    "tags": [
+      "学习率",
+      "调度"
+    ]
+  },
+  {
+    "id": "dl-034",
+    "cat": "dl",
+    "type": "judge",
+    "diff": 2,
+    "q": "FP16 混合精度训练中，通常需要 loss scaling（损失缩放）来防止梯度下溢。",
+    "tags": [
+      "混合精度",
+      "FP16"
+    ]
+  },
+  {
+    "id": "dl-035",
+    "cat": "dl",
+    "type": "choice",
+    "diff": 2,
+    "q": "目标检测任务中，正负样本比例严重不均衡时，常用哪个损失函数缓解？",
+    "tags": [
+      "损失函数",
+      "目标检测"
+    ]
+  },
+  {
+    "id": "dl-036",
+    "cat": "dl",
+    "type": "short",
+    "diff": 1,
+    "q": "什么是迁移学习/预训练-微调？为什么有效？",
+    "tags": [
+      "迁移学习",
+      "预训练"
+    ]
+  },
+  {
+    "id": "dl-037",
+    "cat": "dl",
+    "type": "choice",
+    "diff": 2,
+    "q": "梯度累积（gradient accumulation）的主要作用是：",
+    "tags": [
+      "训练技巧",
+      "显存"
+    ]
+  },
+  {
+    "id": "math-038",
+    "cat": "math",
+    "type": "choice",
+    "diff": 1,
+    "q": "贝叶斯公式 P(A|B) = ?",
+    "tags": [
+      "概率",
+      "贝叶斯"
+    ]
+  },
+  {
+    "id": "math-039",
+    "cat": "math",
+    "type": "short",
+    "diff": 2,
+    "q": "最大似然估计（MLE）与最大后验估计（MAP）的区别？",
+    "tags": [
+      "概率",
+      "MLE",
+      "MAP"
+    ]
+  },
+  {
+    "id": "math-040",
+    "cat": "math",
+    "type": "choice",
+    "diff": 2,
+    "q": "关于熵 H、交叉熵 CE、KL 散度，下列关系正确的是：",
+    "tags": [
+      "信息论",
+      "KL散度"
+    ]
+  },
+  {
+    "id": "math-041",
+    "cat": "math",
+    "type": "short",
+    "diff": 2,
+    "q": "为什么 KL 散度不是对称的？它为什么不满足距离定义？",
+    "tags": [
+      "信息论",
+      "KL散度"
+    ]
+  },
+  {
+    "id": "math-042",
+    "cat": "math",
+    "type": "choice",
+    "diff": 2,
+    "q": "矩阵奇异值分解（SVD）在机器学习中的应用不包括：",
+    "tags": [
+      "线性代数",
+      "SVD"
+    ]
+  },
+  {
+    "id": "math-043",
+    "cat": "math",
+    "type": "short",
+    "diff": 1,
+    "q": "特征值与特征向量的直观理解？",
+    "tags": [
+      "线性代数",
+      "特征值"
+    ]
+  },
+  {
+    "id": "math-044",
+    "cat": "math",
+    "type": "choice",
+    "diff": 1,
+    "q": "随机变量 X 的方差性质：Var(aX + b) = ?",
+    "tags": [
+      "概率",
+      "方差"
+    ]
+  },
+  {
+    "id": "math-045",
+    "cat": "math",
+    "type": "short",
+    "diff": 2,
+    "q": "中心极限定理（CLT）与它在机器学习中的意义？",
+    "tags": [
+      "概率",
+      "中心极限定理"
+    ]
+  },
+  {
+    "id": "code-046",
+    "cat": "code",
+    "type": "code",
+    "diff": 1,
+    "q": "两数之和：给定数组 nums 和目标 target，返回两数下标（假设只有一种答案）。",
+    "tags": [
+      "哈希表",
+      "数组"
+    ]
+  },
+  {
+    "id": "code-047",
+    "cat": "code",
+    "type": "code",
+    "diff": 1,
+    "q": "反转单链表（迭代与递归两种写法）。",
+    "tags": [
+      "链表",
+      "双指针"
+    ]
+  },
+  {
+    "id": "code-048",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "TopK：求数组中第 K 大的元素（或前 K 大）。",
+    "tags": [
+      "堆",
+      "TopK",
+      "快排"
+    ]
+  },
+  {
+    "id": "code-049",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "实现 LRU 缓存（get/put 均为 O(1)）。",
+    "tags": [
+      "LRU",
+      "哈希表",
+      "链表"
+    ]
+  },
+  {
+    "id": "code-050",
+    "cat": "code",
+    "type": "code",
+    "diff": 1,
+    "q": "二叉树的层序遍历（BFS）。",
+    "tags": [
+      "二叉树",
+      "BFS"
+    ]
+  },
+  {
+    "id": "code-051",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "最长公共子序列（LCS）：求两个字符串的最长公共子序列长度。",
+    "tags": [
+      "DP",
+      "字符串"
+    ]
+  },
+  {
+    "id": "code-052",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "最长递增子序列（LIS）长度（进阶：O(n log n) 解法）。",
+    "tags": [
+      "DP",
+      "二分"
+    ]
+  },
+  {
+    "id": "code-053",
+    "cat": "code",
+    "type": "code",
+    "diff": 1,
+    "q": "二分查找（含重复元素时找左边界）。",
+    "tags": [
+      "二分查找"
+    ]
+  },
+  {
+    "id": "code-054",
+    "cat": "code",
+    "type": "code",
+    "diff": 1,
+    "q": "手写数值稳定的 Softmax（numpy）。",
+    "tags": [
+      "numpy",
+      "Softmax",
+      "数值稳定"
+    ]
+  },
+  {
+    "id": "code-055",
+    "cat": "code",
+    "type": "code",
+    "diff": 1,
+    "q": "手写交叉熵损失（numpy，配合 one-hot 标签）。",
+    "tags": [
+      "numpy",
+      "损失函数"
+    ]
+  },
+  {
+    "id": "code-056",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "手写 K-Means 核心循环（numpy）。",
+    "tags": [
+      "numpy",
+      "聚类"
+    ]
+  },
+  {
+    "id": "code-057",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "手写线性回归的批量梯度下降（numpy）。",
+    "tags": [
+      "numpy",
+      "梯度下降"
+    ]
+  },
+  {
+    "id": "code-058",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "实现 Scaled Dot-Product Attention（numpy，不写反向）。",
+    "tags": [
+      "Transformer",
+      "Attention",
+      "numpy"
+    ]
+  },
+  {
+    "id": "code-059",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "编辑距离（Levenshtein）：求把 s1 变成 s2 的最小操作数（插入/删除/替换）。",
+    "tags": [
+      "DP",
+      "字符串"
+    ]
+  },
+  {
+    "id": "llm-060",
+    "cat": "llm",
+    "type": "short",
+    "diff": 1,
+    "q": "简述 Transformer 的整体结构。",
+    "tags": [
+      "Transformer",
+      "结构"
+    ]
+  },
+  {
+    "id": "llm-061",
+    "cat": "llm",
+    "type": "choice",
+    "diff": 2,
+    "q": "标准 Self-Attention 的时间复杂度是：",
+    "tags": [
+      "Attention",
+      "复杂度"
+    ]
+  },
+  {
+    "id": "llm-062",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "为什么 Attention 要除以 √d_k（缩放因子）？",
+    "tags": [
+      "Attention",
+      "数值稳定"
+    ]
+  },
+  {
+    "id": "llm-063",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "多头注意力（Multi-Head Attention）的作用？",
+    "tags": [
+      "Attention",
+      "多头"
+    ]
+  },
+  {
+    "id": "llm-064",
+    "cat": "llm",
+    "type": "short",
+    "diff": 3,
+    "q": "位置编码：绝对位置编码（sinusoidal）与 RoPE 的原理与优缺点？",
+    "tags": [
+      "位置编码",
+      "RoPE"
+    ]
+  },
+  {
+    "id": "llm-065",
+    "cat": "llm",
+    "type": "choice",
+    "diff": 3,
+    "q": "MHA / MQA / GQA 的关系是：",
+    "tags": [
+      "Attention",
+      "KV Cache"
+    ]
+  },
+  {
+    "id": "llm-066",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "什么是 KV Cache？为什么能加速推理？代价是什么？",
+    "tags": [
+      "KV Cache",
+      "推理"
+    ]
+  },
+  {
+    "id": "llm-067",
+    "cat": "llm",
+    "type": "short",
+    "diff": 3,
+    "q": "大模型长度外推的手段有哪些？",
+    "tags": [
+      "位置编码",
+      "外推"
+    ]
+  },
+  {
+    "id": "llm-068",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "Transformer 中的 FFN 结构是什么？为什么参数量占比大？",
+    "tags": [
+      "FFN",
+      "结构"
+    ]
+  },
+  {
+    "id": "llm-069",
+    "cat": "llm",
+    "type": "choice",
+    "diff": 2,
+    "q": "主流大模型（LLaMA/Qwen）的 FFN 激活函数与归一化通常使用：",
+    "tags": [
+      "激活函数",
+      "归一化"
+    ]
+  },
+  {
+    "id": "llm-070",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "为什么大模型普遍用 RMSNorm 而不是 LayerNorm？Pre-LN 与 Post-LN 的区别？",
+    "tags": [
+      "归一化",
+      "RMSNorm"
+    ]
+  },
+  {
+    "id": "llm-071",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "什么是 Tokenization？常见的子词算法有哪些？中文有什么注意点？",
+    "tags": [
+      "Tokenization",
+      "BPE"
+    ]
+  },
+  {
+    "id": "llm-072",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "解码策略：greedy / beam search / top-k / top-p / temperature 的区别？",
+    "tags": [
+      "解码",
+      "采样"
+    ]
+  },
+  {
+    "id": "llm-073",
+    "cat": "llm",
+    "type": "judge",
+    "diff": 2,
+    "q": "Perplexity（困惑度）越低，模型对测试数据的建模越好。",
+    "tags": [
+      "评估",
+      "Perplexity"
+    ]
+  },
+  {
+    "id": "llm-074",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "什么是 Scaling Law 与涌现能力？",
+    "tags": [
+      "Scaling Law",
+      "涌现"
+    ]
+  },
+  {
+    "id": "llm-075",
+    "cat": "llm",
+    "type": "short",
+    "diff": 3,
+    "q": "MoE（Mixture of Experts）的原理与优缺点？",
+    "tags": [
+      "MoE",
+      "架构"
+    ]
+  },
+  {
+    "id": "llm-076",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "什么是思维链（CoT）？为什么有效？什么是上下文学习（ICL）？",
+    "tags": [
+      "CoT",
+      "ICL",
+      "Prompt"
+    ]
+  },
+  {
+    "id": "llm-077",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "什么是 RAG？流程与关键组件？和长上下文的关系？",
+    "tags": [
+      "RAG",
+      "检索"
+    ]
+  },
+  {
+    "id": "llm-078",
+    "cat": "llm",
+    "type": "short",
+    "diff": 3,
+    "q": "什么是 Agent？ReAct 与 Function Calling 是什么？",
+    "tags": [
+      "Agent",
+      "ReAct",
+      "Function Calling"
+    ]
+  },
+  {
+    "id": "llm-079",
+    "cat": "llm",
+    "type": "choice",
+    "diff": 2,
+    "q": "长上下文推理时，最主要的显存瓶颈通常是：",
+    "tags": [
+      "显存",
+      "长上下文"
+    ]
+  },
+  {
+    "id": "llm-080",
+    "cat": "llm",
+    "type": "short",
+    "diff": 3,
+    "q": "什么是 Mamba / 状态空间模型（SSM）？与 Transformer 对比？",
+    "tags": [
+      "Mamba",
+      "SSM",
+      "架构"
+    ]
+  },
+  {
+    "id": "llm-081",
+    "cat": "llm",
+    "type": "short",
+    "diff": 3,
+    "q": "多模态大模型的基本结构？CLIP 是什么？",
+    "tags": [
+      "多模态",
+      "CLIP"
+    ]
+  },
+  {
+    "id": "llm-082",
+    "cat": "llm",
+    "type": "judge",
+    "diff": 1,
+    "q": "翻译任务中，beam search 通常优于 greedy 解码。",
+    "tags": [
+      "解码"
+    ]
+  },
+  {
+    "id": "train-083",
+    "cat": "train",
+    "type": "short",
+    "diff": 2,
+    "q": "SFT（监督微调）的流程与数据构造要点？",
+    "tags": [
+      "SFT",
+      "微调"
+    ]
+  },
+  {
+    "id": "train-084",
+    "cat": "train",
+    "type": "short",
+    "diff": 2,
+    "q": "LoRA 的原理？为什么能大幅节省显存？QLoRA 又做了什么？",
+    "tags": [
+      "LoRA",
+      "QLoRA",
+      "PEFT"
+    ]
+  },
+  {
+    "id": "train-085",
+    "cat": "train",
+    "type": "choice",
+    "diff": 2,
+    "q": "LoRA 中的秩 r 表示：",
+    "tags": [
+      "LoRA"
+    ]
+  },
+  {
+    "id": "train-086",
+    "cat": "train",
+    "type": "short",
+    "diff": 2,
+    "q": "全参微调（Full Fine-tuning）与 PEFT（LoRA 等）的对比？",
+    "tags": [
+      "微调",
+      "PEFT"
+    ]
+  },
+  {
+    "id": "train-087",
+    "cat": "train",
+    "type": "short",
+    "diff": 3,
+    "q": "RLHF 的完整流程？涉及哪几个模型？",
+    "tags": [
+      "RLHF",
+      "PPO"
+    ]
+  },
+  {
+    "id": "train-088",
+    "cat": "train",
+    "type": "short",
+    "diff": 3,
+    "q": "PPO 与 DPO 的区别？DPO 为什么不需要奖励模型？",
+    "tags": [
+      "DPO",
+      "RLHF"
+    ]
+  },
+  {
+    "id": "train-089",
+    "cat": "train",
+    "type": "short",
+    "diff": 3,
+    "q": "GRPO 是什么？DeepSeek 为什么用它？",
+    "tags": [
+      "GRPO",
+      "RL",
+      "DeepSeek"
+    ]
+  },
+  {
+    "id": "train-090",
+    "cat": "train",
+    "type": "short",
+    "diff": 2,
+    "q": "预训练数据为什么要清洗、去重与配比？",
+    "tags": [
+      "数据",
+      "预训练"
+    ]
+  },
+  {
+    "id": "train-091",
+    "cat": "train",
+    "type": "short",
+    "diff": 3,
+    "q": "分布式训练：DDP、ZeRO、张量并行、流水线并行的区别？",
+    "tags": [
+      "分布式",
+      "ZeRO",
+      "并行"
+    ]
+  },
+  {
+    "id": "train-092",
+    "cat": "train",
+    "type": "choice",
+    "diff": 3,
+    "q": "ZeRO-3 与 ZeRO-1 相比：",
+    "tags": [
+      "ZeRO",
+      "显存"
+    ]
+  },
+  {
+    "id": "train-093",
+    "cat": "train",
+    "type": "short",
+    "diff": 2,
+    "q": "FP16 与 BF16 的区别？为什么训练大模型常用 BF16？",
+    "tags": [
+      "混合精度",
+      "BF16"
+    ]
+  },
+  {
+    "id": "train-094",
+    "cat": "train",
+    "type": "short",
+    "diff": 2,
+    "q": "梯度裁剪（gradient clipping）的作用？",
+    "tags": [
+      "梯度裁剪",
+      "稳定性"
+    ]
+  },
+  {
+    "id": "train-095",
+    "cat": "train",
+    "type": "short",
+    "diff": 2,
+    "q": "大模型训练中 warmup + 余弦衰减为什么必要？",
+    "tags": [
+      "学习率",
+      "调度"
+    ]
+  },
+  {
+    "id": "train-096",
+    "cat": "train",
+    "type": "choice",
+    "diff": 1,
+    "q": "训练中 train loss 持续下降但 val loss 上升，说明：",
+    "tags": [
+      "过拟合",
+      "训练曲线"
+    ]
+  },
+  {
+    "id": "train-097",
+    "cat": "train",
+    "type": "short",
+    "diff": 3,
+    "q": "什么是退火（annealing）阶段？指令微调数据质量与数量的关系？",
+    "tags": [
+      "退火",
+      "SFT",
+      "数据质量"
+    ]
+  },
+  {
+    "id": "infer-098",
+    "cat": "infer",
+    "type": "short",
+    "diff": 3,
+    "q": "模型量化的原理？PTQ 与 QAT 的区别？GPTQ / AWQ 的思路？",
+    "tags": [
+      "量化",
+      "GPTQ",
+      "AWQ"
+    ]
+  },
+  {
+    "id": "infer-099",
+    "cat": "infer",
+    "type": "short",
+    "diff": 3,
+    "q": "vLLM 的 PagedAttention 核心思想？解决了什么问题？",
+    "tags": [
+      "vLLM",
+      "PagedAttention"
+    ]
+  },
+  {
+    "id": "infer-100",
+    "cat": "infer",
+    "type": "short",
+    "diff": 2,
+    "q": "推理时显存占用由哪些构成？如何估算？",
+    "tags": [
+      "显存",
+      "推理"
+    ]
+  },
+  {
+    "id": "infer-101",
+    "cat": "infer",
+    "type": "short",
+    "diff": 3,
+    "q": "投机采样（Speculative Decoding）的原理？为什么能加速？",
+    "tags": [
+      "投机采样",
+      "加速"
+    ]
+  },
+  {
+    "id": "infer-102",
+    "cat": "infer",
+    "type": "short",
+    "diff": 2,
+    "q": "连续批处理（Continuous Batching）为什么能提升吞吐？",
+    "tags": [
+      "批处理",
+      "吞吐"
+    ]
+  },
+  {
+    "id": "infer-103",
+    "cat": "infer",
+    "type": "short",
+    "diff": 2,
+    "q": "推理时张量并行（TP）的作用？为什么常用？",
+    "tags": [
+      "张量并行",
+      "多卡"
+    ]
+  },
+  {
+    "id": "infer-104",
+    "cat": "infer",
+    "type": "choice",
+    "diff": 3,
+    "q": "FlashAttention 的核心思想是：",
+    "tags": [
+      "FlashAttention",
+      "加速"
+    ]
+  },
+  {
+    "id": "infer-105",
+    "cat": "infer",
+    "type": "short",
+    "diff": 2,
+    "q": "首 token 延迟（TTFT）与生成吞吐（TPOT/吞吐）分别怎么优化？",
+    "tags": [
+      "TTFT",
+      "吞吐"
+    ]
+  },
+  {
+    "id": "infer-106",
+    "cat": "infer",
+    "type": "short",
+    "diff": 2,
+    "q": "主流推理框架有哪些？prefix caching 是什么？",
+    "tags": [
+      "推理框架",
+      "前缀缓存"
+    ]
+  },
+  {
+    "id": "infer-107",
+    "cat": "infer",
+    "type": "judge",
+    "diff": 2,
+    "q": "KV Cache 显存占用与序列长度成正比。",
+    "tags": [
+      "KV Cache",
+      "显存"
+    ]
+  },
+  {
+    "id": "scene-108",
+    "cat": "scene",
+    "type": "short",
+    "diff": 2,
+    "q": "设计一个 RAG 问答系统，你会怎么做？",
+    "tags": [
+      "RAG",
+      "系统设计"
+    ]
+  },
+  {
+    "id": "scene-109",
+    "cat": "scene",
+    "type": "short",
+    "diff": 2,
+    "q": "设计一个推荐系统（如信息流），讲清架构。",
+    "tags": [
+      "推荐系统",
+      "系统设计"
+    ]
+  },
+  {
+    "id": "scene-110",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "如何评估大模型生成质量？",
+    "tags": [
+      "评估",
+      "LLM"
+    ]
+  },
+  {
+    "id": "scene-111",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "训练一个 10B 参数模型需要多少显存？怎么设计多卡方案？",
+    "tags": [
+      "显存估算",
+      "系统设计"
+    ]
+  },
+  {
+    "id": "scene-112",
+    "cat": "scene",
+    "type": "short",
+    "diff": 2,
+    "q": "线上 LLM 服务延迟高，如何排查与优化？",
+    "tags": [
+      "性能优化",
+      "系统设计"
+    ]
+  },
+  {
+    "id": "scene-113",
+    "cat": "scene",
+    "type": "short",
+    "diff": 2,
+    "q": "设计一个文本内容审核/分类系统。",
+    "tags": [
+      "内容审核",
+      "系统设计"
+    ]
+  },
+  {
+    "id": "scene-114",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "向量检索（ANN）与 BM25 的区别？混合检索怎么做？",
+    "tags": [
+      "检索",
+      "ANN",
+      "BM25"
+    ]
+  },
+  {
+    "id": "scene-115",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "什么是数据泄漏（Data Leakage）？在模型评估中有什么危害？",
+    "tags": [
+      "数据泄漏",
+      "评估"
+    ]
+  },
+  {
+    "id": "behavior-116",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 1,
+    "q": "介绍一个你最满意的项目（建议用 STAR 结构）。",
+    "tags": [
+      "行为面试",
+      "STAR"
+    ]
+  },
+  {
+    "id": "behavior-117",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 1,
+    "q": "项目中遇到的最大困难是什么？你是怎么解决的？",
+    "tags": [
+      "行为面试"
+    ]
+  },
+  {
+    "id": "behavior-118",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 1,
+    "q": "为什么选择 AI 开发方向？你的职业规划？",
+    "tags": [
+      "行为面试"
+    ]
+  },
+  {
+    "id": "behavior-119",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 2,
+    "q": "如何持续跟进 AI 前沿？",
+    "tags": [
+      "行为面试"
+    ]
+  },
+  {
+    "id": "behavior-120",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 2,
+    "q": "和同事/同学意见不合时怎么处理？",
+    "tags": [
+      "行为面试"
+    ]
+  },
+  {
+    "id": "behavior-121",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 1,
+    "q": "你的实习/项目经历中，你具体负责什么？产出了什么？",
+    "tags": [
+      "行为面试"
+    ]
+  },
+  {
+    "id": "behavior-122",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 1,
+    "q": "面试最后，应该反问面试官什么问题？",
+    "tags": [
+      "行为面试"
+    ]
+  },
+  {
+    "id": "behavior-123",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 1,
+    "q": "你的优缺点是什么？",
+    "tags": [
+      "行为面试"
+    ]
+  },
+  {
+    "id": "behavior-124",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 1,
+    "q": "你了解我们公司/这个岗位在做什么吗？",
+    "tags": [
+      "行为面试"
+    ]
+  },
+  {
+    "id": "ml-125",
+    "cat": "ml",
+    "type": "short",
+    "diff": 2,
+    "q": "线性回归与逻辑回归的区别与联系？",
+    "tags": [
+      "线性回归",
+      "逻辑回归"
+    ]
+  },
+  {
+    "id": "ml-126",
+    "cat": "ml",
+    "type": "short",
+    "diff": 2,
+    "q": "类别不均衡有哪些处理手段？",
+    "tags": [
+      "不均衡",
+      "采样"
+    ]
+  },
+  {
+    "id": "ml-127",
+    "cat": "ml",
+    "type": "short",
+    "diff": 2,
+    "q": "特征选择有哪些方法？",
+    "tags": [
+      "特征选择"
+    ]
+  },
+  {
+    "id": "ml-128",
+    "cat": "ml",
+    "type": "choice",
+    "diff": 1,
+    "q": "朴素贝叶斯的「朴素」是指：",
+    "tags": [
+      "朴素贝叶斯"
+    ]
+  },
+  {
+    "id": "ml-129",
+    "cat": "ml",
+    "type": "short",
+    "diff": 2,
+    "q": "聚类效果如何评估？",
+    "tags": [
+      "聚类",
+      "评估"
+    ]
+  },
+  {
+    "id": "dl-130",
+    "cat": "dl",
+    "type": "short",
+    "diff": 2,
+    "q": "CNN 的权值共享与局部连接带来了什么？",
+    "tags": [
+      "CNN"
+    ]
+  },
+  {
+    "id": "dl-131",
+    "cat": "dl",
+    "type": "short",
+    "diff": 2,
+    "q": "GAN 与自编码器（AE/VAE）的区别？",
+    "tags": [
+      "GAN",
+      "VAE"
+    ]
+  },
+  {
+    "id": "dl-132",
+    "cat": "dl",
+    "type": "judge",
+    "diff": 1,
+    "q": "RNN 处理长序列时容易出现梯度消失，LSTM 通过门控与细胞状态缓解了这一问题。",
+    "tags": [
+      "RNN",
+      "LSTM"
+    ]
+  },
+  {
+    "id": "dl-133",
+    "cat": "dl",
+    "type": "short",
+    "diff": 1,
+    "q": "常见的数据增强手段有哪些？",
+    "tags": [
+      "数据增强"
+    ]
+  },
+  {
+    "id": "math-134",
+    "cat": "math",
+    "type": "short",
+    "diff": 2,
+    "q": "如何判断一个函数是凸函数？为什么凸性对优化重要？",
+    "tags": [
+      "凸优化"
+    ]
+  },
+  {
+    "id": "math-135",
+    "cat": "math",
+    "type": "short",
+    "diff": 2,
+    "q": "互信息（Mutual Information）是什么？和相关系数的区别？",
+    "tags": [
+      "信息论",
+      "互信息"
+    ]
+  },
+  {
+    "id": "llm-136",
+    "cat": "llm",
+    "type": "short",
+    "diff": 1,
+    "q": "词向量（Word2Vec）与 LLM 的 Token Embedding 有什么区别？",
+    "tags": [
+      "Embedding",
+      "词向量"
+    ]
+  },
+  {
+    "id": "llm-137",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "大模型幻觉（Hallucination）的原因与缓解手段？",
+    "tags": [
+      "幻觉"
+    ]
+  },
+  {
+    "id": "llm-138",
+    "cat": "llm",
+    "type": "choice",
+    "diff": 2,
+    "q": "temperature 越低，生成结果：",
+    "tags": [
+      "采样",
+      "Temperature"
+    ]
+  },
+  {
+    "id": "llm-139",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "InstructGPT / ChatGPT 的「对齐」三步法是什么？",
+    "tags": [
+      "对齐",
+      "InstructGPT"
+    ]
+  },
+  {
+    "id": "llm-140",
+    "cat": "llm",
+    "type": "short",
+    "diff": 3,
+    "q": "如何评测长上下文能力？",
+    "tags": [
+      "长上下文",
+      "评测"
+    ]
+  },
+  {
+    "id": "train-141",
+    "cat": "train",
+    "type": "short",
+    "diff": 3,
+    "q": "什么时候用 SFT，什么时候用 RLHF/DPO？",
+    "tags": [
+      "SFT",
+      "RLHF",
+      "DPO"
+    ]
+  },
+  {
+    "id": "train-142",
+    "cat": "train",
+    "type": "short",
+    "diff": 2,
+    "q": "什么是知识蒸馏？大模型蒸馏的应用？",
+    "tags": [
+      "蒸馏"
+    ]
+  },
+  {
+    "id": "train-143",
+    "cat": "train",
+    "type": "judge",
+    "diff": 2,
+    "q": "断点续训时，需要保存模型权重、优化器状态、学习率调度器状态与随机数种子（如需要严格复现）。",
+    "tags": [
+      "Checkpoint"
+    ]
+  },
+  {
+    "id": "train-144",
+    "cat": "train",
+    "type": "short",
+    "diff": 2,
+    "q": "测试集污染（评估集混入训练数据）有什么危害？怎么防？",
+    "tags": [
+      "数据污染",
+      "评测"
+    ]
+  },
+  {
+    "id": "infer-145",
+    "cat": "infer",
+    "type": "short",
+    "diff": 2,
+    "q": "量化后模型精度为什么会下降？哪些层最敏感？",
+    "tags": [
+      "量化",
+      "精度"
+    ]
+  },
+  {
+    "id": "infer-146",
+    "cat": "infer",
+    "type": "short",
+    "diff": 2,
+    "q": "推理时 GPU 利用率低，可能的原因与对策？",
+    "tags": [
+      "GPU",
+      "性能"
+    ]
+  },
+  {
+    "id": "infer-147",
+    "cat": "infer",
+    "type": "choice",
+    "diff": 2,
+    "q": "推理服务中，把多个短请求拼成一个 batch 的收益主要是：",
+    "tags": [
+      "批处理",
+      "吞吐"
+    ]
+  },
+  {
+    "id": "code-148",
+    "cat": "code",
+    "type": "code",
+    "diff": 1,
+    "q": "手写单层神经网络的 ReLU 前向（numpy，含批量矩阵乘）。",
+    "tags": [
+      "numpy",
+      "前向"
+    ]
+  },
+  {
+    "id": "code-149",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "判断单链表是否有环，并找到环的入口（快慢指针）。",
+    "tags": [
+      "链表",
+      "快慢指针"
+    ]
+  },
+  {
+    "id": "code-150",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "实现 LRU 之外，手写一个简单的 Top-K 高频词统计（海量文本）。",
+    "tags": [
+      "堆",
+      "统计"
+    ]
+  },
+  {
+    "id": "scene-151",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "设计多轮对话（Agent）的上下文管理：如何控制 token 成本与记忆？",
+    "tags": [
+      "多轮对话",
+      "记忆",
+      "成本"
+    ]
+  },
+  {
+    "id": "scene-152",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "大模型推理成本太高，如何系统性降本？",
+    "tags": [
+      "成本优化",
+      "系统设计"
+    ]
+  },
+  {
+    "id": "rag-153",
+    "cat": "rag",
+    "type": "short",
+    "diff": 1,
+    "q": "简述 RAG（检索增强生成）的完整流程，并说明每一环节的作用。",
+    "tags": [
+      "RAG",
+      "检索",
+      "流程"
+    ]
+  },
+  {
+    "id": "rag-154",
+    "cat": "rag",
+    "type": "choice",
+    "diff": 1,
+    "q": "对长文档做固定长度（如 512 token）切分时，最典型的质量问题是：",
+    "tags": [
+      "chunking",
+      "切分"
+    ]
+  },
+  {
+    "id": "rag-155",
+    "cat": "rag",
+    "type": "short",
+    "diff": 2,
+    "q": "常用的文档切分策略有哪些？chunk size 如何选择？",
+    "tags": [
+      "chunking",
+      "切分策略"
+    ]
+  },
+  {
+    "id": "rag-156",
+    "cat": "rag",
+    "type": "short",
+    "diff": 2,
+    "q": "为什么纯向量检索不够，需要混合检索（BM25 + 向量）？",
+    "tags": [
+      "混合检索",
+      "BM25"
+    ]
+  },
+  {
+    "id": "rag-157",
+    "cat": "rag",
+    "type": "choice",
+    "diff": 1,
+    "q": "FAISS 中 IndexFlatIP（暴力内积检索）与 HNSW（图索引）的主要区别是：",
+    "tags": [
+      "FAISS",
+      "ANN",
+      "向量索引"
+    ]
+  },
+  {
+    "id": "rag-158",
+    "cat": "rag",
+    "type": "short",
+    "diff": 2,
+    "q": "重排序（Rerank）在 RAG 中的作用是什么？常见实现方式有哪些？",
+    "tags": [
+      "Rerank",
+      "重排序",
+      "精排"
+    ]
+  },
+  {
+    "id": "rag-159",
+    "cat": "rag",
+    "type": "short",
+    "diff": 2,
+    "q": "如何评估 RAG 系统的检索质量与端到端回答质量？",
+    "tags": [
+      "RAG 评估",
+      "Recall@K",
+      "忠实度"
+    ]
+  },
+  {
+    "id": "rag-160",
+    "cat": "rag",
+    "type": "short",
+    "diff": 3,
+    "q": "RAG 常见的失败模式有哪些？分别如何缓解？",
+    "tags": [
+      "RAG 失败",
+      "幻觉",
+      "排查"
+    ]
+  },
+  {
+    "id": "rag-161",
+    "cat": "rag",
+    "type": "short",
+    "diff": 2,
+    "q": "解析包含表格与图表的 PDF 时有哪些技术路线与难点？",
+    "tags": [
+      "PDF 解析",
+      "表格",
+      "版面分析"
+    ]
+  },
+  {
+    "id": "rag-162",
+    "cat": "rag",
+    "type": "short",
+    "diff": 3,
+    "q": "如何从科研图表（坐标轴刻度、图例、Panel、误差棒）中抽取数值？给出一个多模态方案。",
+    "tags": [
+      "VLM",
+      "图表抽取",
+      "多模态",
+      "Panel"
+    ]
+  },
+  {
+    "id": "rag-163",
+    "cat": "rag",
+    "type": "choice",
+    "diff": 2,
+    "q": "向量检索中，余弦相似度与内积（点积）的使用区别是：",
+    "tags": [
+      "相似度",
+      "余弦",
+      "内积"
+    ]
+  },
+  {
+    "id": "rag-164",
+    "cat": "rag",
+    "type": "short",
+    "diff": 3,
+    "q": "设计一个从论文正文+图表中抽取测量记录（物种/组织/单位/数值）的流水线，并说明各阶段的输入输出。",
+    "tags": [
+      "流水线",
+      "抽取系统",
+      "系统设计"
+    ]
+  },
+  {
+    "id": "rag-165",
+    "cat": "rag",
+    "type": "short",
+    "diff": 2,
+    "q": "什么是\"语义回填\"？在图表数值抽取中起什么作用？",
+    "tags": [
+      "语义回填",
+      "RAG",
+      "图表"
+    ]
+  },
+  {
+    "id": "rag-166",
+    "cat": "rag",
+    "type": "judge",
+    "diff": 2,
+    "q": "RAG 中 top-k 取得越大，回答质量一定越高。",
+    "tags": [
+      "top-k",
+      "上下文污染"
+    ]
+  },
+  {
+    "id": "rag-167",
+    "cat": "rag",
+    "type": "short",
+    "diff": 2,
+    "q": "RAG 与超长上下文（如 128K 窗口直接塞全文）相比，各自的优劣？什么场景必须用 RAG？",
+    "tags": [
+      "RAG vs 长上下文",
+      "成本"
+    ]
+  },
+  {
+    "id": "kg-168",
+    "cat": "kg",
+    "type": "short",
+    "diff": 2,
+    "q": "图数据库（如 Neo4j）相比关系型数据库的优势？适合什么场景？",
+    "tags": [
+      "Neo4j",
+      "图数据库"
+    ]
+  },
+  {
+    "id": "kg-169",
+    "cat": "kg",
+    "type": "choice",
+    "diff": 1,
+    "q": "Neo4j 使用的声明式查询语言是：",
+    "tags": [
+      "Cypher",
+      "Neo4j"
+    ]
+  },
+  {
+    "id": "kg-170",
+    "cat": "kg",
+    "type": "short",
+    "diff": 2,
+    "q": "Cypher 中 MATCH 与 MERGE 的区别？分别什么场景用？",
+    "tags": [
+      "Cypher",
+      "MATCH",
+      "MERGE"
+    ]
+  },
+  {
+    "id": "kg-171",
+    "cat": "kg",
+    "type": "short",
+    "diff": 3,
+    "q": "本体（Ontology）在知识图谱构建中的作用是什么？以 OBOE 为例说明 Observation/Measurement 数据模型。",
+    "tags": [
+      "本体",
+      "OBOE",
+      "Observation",
+      "知识图谱"
+    ]
+  },
+  {
+    "id": "kg-172",
+    "cat": "kg",
+    "type": "short",
+    "diff": 2,
+    "q": "实体关系抽取（NER + RE）的主流方法有哪些？",
+    "tags": [
+      "NER",
+      "关系抽取",
+      "三元组"
+    ]
+  },
+  {
+    "id": "kg-173",
+    "cat": "kg",
+    "type": "short",
+    "diff": 3,
+    "q": "如何实现\"证据溯源\"——从知识图谱中的一条记录反查到原始论文与图表？",
+    "tags": [
+      "证据溯源",
+      "provenance",
+      "知识图谱"
+    ]
+  },
+  {
+    "id": "kg-174",
+    "cat": "kg",
+    "type": "short",
+    "diff": 2,
+    "q": "RDF 三元组图与属性图（Labeled Property Graph）的区别？RDFLib 与 Neo4j 各自适用什么？",
+    "tags": [
+      "RDF",
+      "属性图",
+      "SPARQL"
+    ]
+  },
+  {
+    "id": "agent-175",
+    "cat": "agent",
+    "type": "short",
+    "diff": 2,
+    "q": "什么是 ReAct 模式？推理（Reasoning）与行动（Action）如何交替？",
+    "tags": [
+      "ReAct",
+      "推理",
+      "Agent"
+    ]
+  },
+  {
+    "id": "agent-176",
+    "cat": "agent",
+    "type": "short",
+    "diff": 2,
+    "q": "Function Calling（工具调用）的原理是什么？与 JSON Schema 有什么关系？",
+    "tags": [
+      "Function Calling",
+      "JSON Schema",
+      "工具调用"
+    ]
+  },
+  {
+    "id": "agent-177",
+    "cat": "agent",
+    "type": "choice",
+    "diff": 1,
+    "q": "要让 LLM 输出严格可解析的 JSON，最可靠的方式是：",
+    "tags": [
+      "结构化输出",
+      "JSON"
+    ]
+  },
+  {
+    "id": "agent-178",
+    "cat": "agent",
+    "type": "short",
+    "diff": 2,
+    "q": "JSON Mode / Structured Output 与 Function Calling 有什么区别？",
+    "tags": [
+      "JSON Mode",
+      "Function Calling",
+      "区别"
+    ]
+  },
+  {
+    "id": "agent-179",
+    "cat": "agent",
+    "type": "short",
+    "diff": 2,
+    "q": "多阶段 Agent 工作流中，\"阶段\"之间如何传递中间产物？设计上要注意什么？",
+    "tags": [
+      "多阶段",
+      "中间产物",
+      "工作流"
+    ]
+  },
+  {
+    "id": "agent-180",
+    "cat": "agent",
+    "type": "short",
+    "diff": 3,
+    "q": "Agent 执行失败（模型异常输出、工具报错、超时）时，如何设计重试与降级策略？",
+    "tags": [
+      "重试",
+      "降级",
+      "容错"
+    ]
+  },
+  {
+    "id": "agent-181",
+    "cat": "agent",
+    "type": "short",
+    "diff": 2,
+    "q": "什么情况下需要\"审核队列\"（human-in-the-loop）？如何设计？",
+    "tags": [
+      "审核队列",
+      "HITL",
+      "人工审核"
+    ]
+  },
+  {
+    "id": "agent-182",
+    "cat": "agent",
+    "type": "short",
+    "diff": 2,
+    "q": "Agent 的\"记忆\"有哪几种？各自用途？",
+    "tags": [
+      "记忆",
+      "上下文",
+      "Agent"
+    ]
+  },
+  {
+    "id": "agent-183",
+    "cat": "agent",
+    "type": "short",
+    "diff": 3,
+    "q": "如何把一个复杂任务分解给多智能体？多智能体协作有哪些模式？",
+    "tags": [
+      "多智能体",
+      "编排",
+      "任务分解"
+    ]
+  },
+  {
+    "id": "agent-184",
+    "cat": "agent",
+    "type": "choice",
+    "diff": 2,
+    "q": "工具调用循环中，防止 LLM 反复调用同一工具/无限循环的机制是：",
+    "tags": [
+      "死循环",
+      "工具调用",
+      "防护"
+    ]
+  },
+  {
+    "id": "agent-185",
+    "cat": "agent",
+    "type": "short",
+    "diff": 2,
+    "q": "为什么工具调用/抽取类任务通常使用较低 temperature（如 0-0.3）？",
+    "tags": [
+      "temperature",
+      "采样",
+      "确定性"
+    ]
+  },
+  {
+    "id": "agent-186",
+    "cat": "agent",
+    "type": "short",
+    "diff": 3,
+    "q": "设计一个\"论文 → 结构化数据 → 知识图谱\"的多智能体流水线，说明角色划分与失败处理。",
+    "tags": [
+      "多智能体",
+      "流水线",
+      "知识图谱",
+      "系统设计"
+    ]
+  },
+  {
+    "id": "agent-187",
+    "cat": "agent",
+    "type": "short",
+    "diff": 2,
+    "q": "上下文窗口有限时，Agent 如何处理长文档/长对话的上下文？",
+    "tags": [
+      "上下文管理",
+      "长文档",
+      "摘要"
+    ]
+  },
+  {
+    "id": "agent-188",
+    "cat": "agent",
+    "type": "judge",
+    "diff": 1,
+    "q": "用 Pydantic/JSON Schema 校验 LLM 输出是保证下游代码不崩溃的唯一手段。",
+    "tags": [
+      "Schema 校验",
+      "误区"
+    ]
+  },
+  {
+    "id": "agent-189",
+    "cat": "agent",
+    "type": "short",
+    "diff": 2,
+    "q": "Prompt 中\"系统提示词\"与\"few-shot 示例\"各自的作用？什么时候需要 few-shot？",
+    "tags": [
+      "Prompt",
+      "few-shot",
+      "系统提示"
+    ]
+  },
+  {
+    "id": "agent-190",
+    "cat": "agent",
+    "type": "short",
+    "diff": 3,
+    "q": "如何评估一个多智能体抽取系统端到端的质量？",
+    "tags": [
+      "评估",
+      "黄金集",
+      "质量"
+    ]
+  },
+  {
+    "id": "llm-191",
+    "cat": "llm",
+    "type": "short",
+    "diff": 1,
+    "q": "LLM 应用中的流式输出（SSE）有什么意义？实现上要注意什么？",
+    "tags": [
+      "流式",
+      "SSE",
+      "TTFT"
+    ]
+  },
+  {
+    "id": "llm-192",
+    "cat": "llm",
+    "type": "short",
+    "diff": 2,
+    "q": "如何估算与控制 LLM 调用的 token 成本？prefix caching 的原理是什么？",
+    "tags": [
+      "token 成本",
+      "prefix caching",
+      "优化"
+    ]
+  },
+  {
+    "id": "llm-193",
+    "cat": "llm",
+    "type": "choice",
+    "diff": 2,
+    "q": "同一份上下文反复命中缓存时，DeepSeek 的上下文硬盘缓存计费特点是：",
+    "tags": [
+      "缓存计费",
+      "DeepSeek"
+    ]
+  },
+  {
+    "id": "scene-194",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "设计生态学文献智能抽取系统的异步处理：输入 1000 篇 PDF，如何设计任务队列、并发、失败重试与进度查询？",
+    "tags": [
+      "任务队列",
+      "异步",
+      "并发",
+      "系统设计"
+    ]
+  },
+  {
+    "id": "scene-195",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "抽取结果如何做质量保障？请给出审核队列 + 抽样评估方案。",
+    "tags": [
+      "质量保障",
+      "审核",
+      "评估"
+    ]
+  },
+  {
+    "id": "scene-196",
+    "cat": "scene",
+    "type": "short",
+    "diff": 2,
+    "q": "FastAPI 接口设计：上传 PDF → 任务状态 → 结果导出，如何设计 REST 接口与数据模型？",
+    "tags": [
+      "FastAPI",
+      "REST",
+      "接口设计"
+    ]
+  },
+  {
+    "id": "scene-197",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "论文图表数值抽取准确率低，如何系统性提升？（模型、提示、后处理、兜底）",
+    "tags": [
+      "图表抽取",
+      "VLM",
+      "准确率",
+      "优化"
+    ]
+  },
+  {
+    "id": "scene-198",
+    "cat": "scene",
+    "type": "short",
+    "diff": 2,
+    "q": "RAG 中向量库（FAISS/Chroma）与图数据库（Neo4j）如何配合使用？",
+    "tags": [
+      "FAISS",
+      "Neo4j",
+      "graph RAG"
+    ]
+  },
+  {
+    "id": "scene-199",
+    "cat": "scene",
+    "type": "short",
+    "diff": 2,
+    "q": "LLM 输出不稳定，你的系统如何做测试？（pytest 覆盖哪些层？）",
+    "tags": [
+      "pytest",
+      "测试",
+      "LLM",
+      "mock"
+    ]
+  },
+  {
+    "id": "scene-200",
+    "cat": "scene",
+    "type": "short",
+    "diff": 3,
+    "q": "如果系统要支持每天新增 500 篇论文入库并保持查询时效，架构上怎么演进？",
+    "tags": [
+      "架构演进",
+      "扩容",
+      "增量索引"
+    ]
+  },
+  {
+    "id": "scene-201",
+    "cat": "scene",
+    "type": "choice",
+    "diff": 2,
+    "q": "多阶段 LLM 流水线中，某一阶段偶发超时（如 VLM 抽取 60s 未返回），最合理的处理是：",
+    "tags": [
+      "超时",
+      "重试",
+      "流水线"
+    ]
+  },
+  {
+    "id": "code-202",
+    "cat": "code",
+    "type": "code",
+    "diff": 1,
+    "q": "两数之和：给定整数数组 nums 和目标值 target，返回和为 target 的两个数的下标。假设每种输入只有一个答案。",
+    "tags": [
+      "哈希表",
+      "数组"
+    ]
+  },
+  {
+    "id": "code-203",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "最长无重复字符子串：给定字符串 s，找出不含重复字符的最长子串的长度。",
+    "tags": [
+      "滑动窗口",
+      "哈希表"
+    ]
+  },
+  {
+    "id": "code-204",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "合并两个有序链表：将两个升序链表合并为一个新的升序链表并返回。",
+    "tags": [
+      "链表",
+      "双指针"
+    ]
+  },
+  {
+    "id": "code-205",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "寻找旋转排序数组中的最小值：数组 [4,5,6,7,0,1,2] 是升序数组旋转得到的，返回最小值。",
+    "tags": [
+      "二分查找",
+      "数组"
+    ]
+  },
+  {
+    "id": "code-206",
+    "cat": "code",
+    "type": "code",
+    "diff": 2,
+    "q": "二叉树的层序遍历：按层返回二叉树的节点值列表（每层一个列表）。",
+    "tags": [
+      "二叉树",
+      "BFS"
+    ]
+  },
+  {
+    "id": "code-207",
+    "cat": "code",
+    "type": "code",
+    "diff": 3,
+    "q": "前 K 个高频元素：给定整数数组，返回出现频率前 K 高的元素（k 保证合法，答案唯一）。",
+    "tags": [
+      "堆",
+      "哈希表",
+      "TopK"
+    ]
+  },
+  {
+    "id": "behavior-208",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 1,
+    "q": "请介绍你的 EcoMINER 项目：背景、你的角色、技术难点与最终成果。",
+    "tags": [
+      "项目介绍",
+      "EcoMINER"
+    ]
+  },
+  {
+    "id": "behavior-209",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 2,
+    "q": "实习/项目中，模型输出不稳定导致下游报错或数据错误，你是怎么定位和解决的？",
+    "tags": [
+      "问题排查",
+      "模型不稳定"
+    ]
+  },
+  {
+    "id": "behavior-210",
+    "cat": "behavior",
+    "type": "short",
+    "diff": 2,
+    "q": "同时负责解析、抽取、图谱导入多个模块，你如何管理优先级与进度？",
+    "tags": [
+      "项目管理",
+      "优先级"
+    ]
+  }
+]

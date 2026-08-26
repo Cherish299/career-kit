@@ -12,7 +12,7 @@
 | 📡 **岗位雷达 Job Radar** | JD/URL 录入、官网采集预览、去重、收藏、截止日期、同步提醒 | ✅ 第 6 周最小闭环已落地 |
 | 📄 **材料工作室 Asset Studio** | 岗位定制简历版本、求职信、个人主页 | 🔄 简历副本与公开主页 API 已落地 |
 | 📨 **投递管线 Application Pipeline** | 状态看板、事件溯源、提醒、统计 | 🔄 状态机已完成，统计待补 |
-| 🧠 **面试准备 Interview Kit** | 152 题题库、笔试/面试模拟、JD 定向准备 | 🔄 已接入 JD 规则映射与准备计划生成 |
+| 🧠 **面试准备 Interview Kit** | 210 题题库（152 核心 + RAG/Agent/KG 定制）、笔试/面试模拟、JD 定向准备 | 🔄 已接入 legacy 题库联动与准备计划生成 |
 
 ## 当前状态：M1 已可演示，M2 已补到最小可运行闭环
 
@@ -22,7 +22,7 @@
 现有两个成熟工具已作为 legacy 模块迁入：
 
 - `legacy/resume-kit` — **简历工作台**（6 岗位模板 × 4 风格、A4 预览、规则体检、求职台、可选 AI 优化、DSH 插件）
-- `legacy/interview-kit` — **AI 岗刷题**（152 题：机器学习/深度学习/大模型/RAG/Agent/知识图谱/算法/场景/行为，笔试/面试模拟、学习统计、个性化方案、DSH 插件）
+- `legacy/interview-kit` — **AI 岗刷题**（题库共 210 题：152 核心题覆盖机器学习/深度学习/大模型/训练/推理/数学/算法/场景/行为，另有 RAG/Agent/知识图谱等定制题；笔试/面试模拟、学习统计、个性化方案、DSH 插件）
 - `services/api/alembic/versions/46f046296328_initial_careeros_schema.py` — **首个数据库迁移**（覆盖当前 CareerOS 核心表结构）
 
 两个 legacy 工具均**纯前端、无构建依赖**（Node 即可构建）。统一命令（仓库根目录）：
@@ -67,6 +67,8 @@ npm run dev
 - `services/api/app/api/routers/job.py`：岗位收藏、deadline、stale、sync、alerts、sync runs
 - `services/api/app/api/routers/profile.py`：公开主页 slug、字段白名单、只读 public API
 - `services/api/app/api/routers/interview.py`：JD 关联面试准备计划生成与读取
+- `services/api/app/services/interview_questions.json`：由 legacy interview-kit 题库导出的结构化题库（210 题），面试计划直接从题库按分类抽题
+- `legacy/interview-kit/scripts/export-questions.mjs`：题库导出脚本（`node scripts/export-questions.mjs` 重新生成，`--check` 只校验）
 - `services/api/alembic/versions/46f046296328_initial_careeros_schema.py`：初始迁移
 - `services/api/alembic/versions/50de55dfebe4_add_job_alerts_and_sync_fields.py`：提醒迁移
 - `services/api/alembic/versions/6f6f4f975f1f_add_job_sync_runs_and_alert_dedupe.py`：同步日志与提醒去重迁移
