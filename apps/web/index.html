@@ -36,9 +36,21 @@
       <div id="profileList"></div>
     </div>
     <div class="card">
-      <h2>公开主页预览</h2>
+      <h2>公开主页设置</h2>
       <div class="row">
-        <input id="publicSlugInput" placeholder="输入公开 slug，如 zhang-san-ai">
+        <select id="publicProfileSelect"></select>
+        <select id="publicVisibilitySelect">
+          <option value="private">private</option>
+          <option value="shared">shared</option>
+          <option value="public">public</option>
+        </select>
+      </div>
+      <div class="grid">
+        <label>公开 slug <input id="publicSlugInput" placeholder="如 zhang-san-ai"></label>
+        <label>公开字段（逗号分隔） <input id="publicFieldsInput" placeholder="display_name,summary,skills,projects"></label>
+      </div>
+      <div class="row">
+        <button id="btnSavePublicProfile" class="btn primary">保存公开设置</button>
         <button id="btnLoadPublicProfile" class="btn">查看公开页</button>
       </div>
       <div id="publicProfileResult" class="result"></div>

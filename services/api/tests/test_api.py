@@ -123,6 +123,31 @@ def test_public_profile_page_serves_html(client):
     assert "CareerOS Public Profile" in response.text
 
 
+def test_profile_update_persists_public_settings(client):
+    created = client.post(
+        "/api/profiles",
+        json={"display_name": "王五", "visibility": "private", "public_slug": "wang-wu"},
+    )
+    assert created.status_code == 201, created.text
+    profile = created.json()
+
+    updated = client.patch(
+        f"/api/profiles/{profile['id']}",
+        json={
+            "visibility": "public",
+            "public_slug": "wang-wu-ai",
+            "public_fields": ["display_name", "summary", "skills"],
+            "summary": "后端与 AI 应用开发",
+        },
+    )
+    assert updated.status_code == 200, updated.text
+    data = updated.json()
+    assert data["visibility"] == "public"
+    assert data["public_slug"] == "wang-wu-ai"
+    assert data["public_fields"] == ["display_name", "summary", "skills"]
+
+
+
 def test_public_profile_returns_whitelisted_fields_only(client):
     created = client.post(
         "/api/profiles",

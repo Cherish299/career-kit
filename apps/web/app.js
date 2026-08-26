@@ -72,6 +72,10 @@ async function importProfile() {
   } catch (err) { toast("导入失败：" + err.message, "err"); }
 }
 
+function splitPublicFields(value) {
+  return String(value || "").split(/[;,，；\s]+/).map((item) => item.trim()).filter(Boolean);
+}
+
 async function renderProfiles() {
   const profiles = await api("/profiles");
   el("profileList").innerHTML = profiles.length
@@ -79,9 +83,43 @@ async function renderProfiles() {
       <div class="list-item">
         <b>${esc(p.display_name)}</b>
         <span class="muted">${p.experiences.length} 条经历 · ${p.skills.length} 项技能 · 可见性 ${esc(p.visibility)}</span>
-        <span class="muted">公开 slug：${esc(p.public_slug || "未生成")} · 偏好：${(p.preference ? p.preference.roles : []).join("、") || "未设置"}</span>
+        <span class="muted">公开 slug：${esc(p.public_slug || "未生成")} · 公开字段：${esc((p.public_fields || []).join(", ") || "未设置")}</span>
       </div>`).join("")
     : '<div class="muted">暂无画像，先导入 Resume Kit JSON。</div>';
+
+  fillSelect("publicProfileSelect", profiles, (p) => `${p.display_name || p.id.slice(0, 8)} · ${p.public_slug || "未生成 slug"}`);
+  syncPublicProfileForm(profiles);
+}
+
+function syncPublicProfileForm(profiles) {
+  const selectedId = el("publicProfileSelect").value;
+  const profile = profiles.find((item) => item.id === selectedId) || profiles[0];
+  if (!profile) return;
+  el("publicProfileSelect").value = profile.id;
+  el("publicSlugInput").value = profile.public_slug || "";
+  el("publicVisibilitySelect").value = profile.visibility || "private";
+  el("publicFieldsInput").value = (profile.public_fields || []).join(",");
+}
+
+async function savePublicProfileSettings() {
+  const profileId = el("publicProfileSelect").value;
+  if (!profileId) return toast("请先选择画像", "err");
+  const payload = {
+    public_slug: el("publicSlugInput").value.trim(),
+    visibility: el("publicVisibilitySelect").value,
+    public_fields: splitPublicFields(el("publicFieldsInput").value),
+  };
+  try {
+    await api(`/profiles/${encodeURIComponent(profileId)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    toast("公开设置已保存");
+    await renderProfiles();
+  } catch (err) {
+    toast("保存失败：" + err.message, "err");
+  }
 }
 
 async function loadPublicProfile() {
@@ -89,6 +127,14 @@ async function loadPublicProfile() {
   if (!slug) return toast("请先输入公开 slug", "err");
   try {
     const data = await api(`/profiles/public/${encodeURIComponent(slug)}`);
+    const currentProfileId = el("publicProfileSelect")?.value;
+    if (currentProfileId) {
+      const currentProfile = (await api("/profiles")).find((item) => item.id === currentProfileId);
+      if (currentProfile) {
+        el("publicVisibilitySelect").value = currentProfile.visibility || "private";
+        el("publicFieldsInput").value = (currentProfile.public_fields || []).join(",");
+      }
+    }
     el("publicProfileResult").innerHTML = `
       <div class="ok">公开主页可访问：${esc(data.display_name || slug)}</div>
       <div><b>${esc(data.display_name)}</b></div>
@@ -506,7 +552,9 @@ async function init() {
   initOfferForm();
   await loadOfferNavigations();
   el("btnImport").onclick = importProfile;
+  el("btnSavePublicProfile").onclick = savePublicProfileSettings;
   el("btnLoadPublicProfile").onclick = loadPublicProfile;
+  el("publicProfileSelect").onchange = () => renderProfiles();
   el("btnAddJob").onclick = addJob;
   el("btnRefreshJobs").onclick = renderJobs;
   el("btnRefreshAlerts").onclick = renderJobAlerts;
