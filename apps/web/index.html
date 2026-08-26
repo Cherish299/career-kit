@@ -47,7 +47,15 @@
       </div>
       <div class="grid">
         <label>公开 slug <input id="publicSlugInput" placeholder="如 zhang-san-ai"></label>
-        <label>公开字段（逗号分隔） <input id="publicFieldsInput" placeholder="display_name,summary,skills,projects"></label>
+        <div>
+          <div class="muted">公开字段</div>
+          <div id="publicFieldsGroup" class="checkbox-grid">
+            <label><input type="checkbox" value="display_name"> display_name</label>
+            <label><input type="checkbox" value="summary"> summary</label>
+            <label><input type="checkbox" value="skills"> skills</label>
+            <label><input type="checkbox" value="projects"> projects</label>
+          </div>
+        </div>
       </div>
       <div class="row">
         <button id="btnSavePublicProfile" class="btn primary">保存公开设置</button>

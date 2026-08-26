@@ -31,8 +31,8 @@ async function loadPublicProfile() {
   const data = await res.json();
   document.title = `${data.display_name || slug} · CareerOS Public Profile`;
   document.getElementById("publicName").textContent = data.display_name || slug;
-  document.getElementById("publicSummary").textContent = data.summary || "暂无公开简介。";
-  document.getElementById("publicMeta").textContent = `项目 ${data.experiences.length} 条 · 技能 ${data.skills.length} 项`;
+  document.getElementById("publicSummary").textContent = data.summary || "这位候选人暂未填写公开简介。";
+  document.getElementById("publicMeta").textContent = `公开项目 ${data.experiences.length} 条 · 公开技能 ${data.skills.length} 项`;
 
   renderList(
     "publicExperiences",

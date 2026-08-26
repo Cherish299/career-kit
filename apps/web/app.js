@@ -72,8 +72,15 @@ async function importProfile() {
   } catch (err) { toast("导入失败：" + err.message, "err"); }
 }
 
-function splitPublicFields(value) {
-  return String(value || "").split(/[;,，；\s]+/).map((item) => item.trim()).filter(Boolean);
+function getCheckedPublicFields() {
+  return Array.from(document.querySelectorAll("#publicFieldsGroup input[type=checkbox]:checked")).map((node) => node.value);
+}
+
+function setCheckedPublicFields(fields) {
+  const values = new Set(fields || []);
+  document.querySelectorAll("#publicFieldsGroup input[type=checkbox]").forEach((node) => {
+    node.checked = values.has(node.value);
+  });
 }
 
 async function renderProfiles() {
@@ -98,7 +105,7 @@ function syncPublicProfileForm(profiles) {
   el("publicProfileSelect").value = profile.id;
   el("publicSlugInput").value = profile.public_slug || "";
   el("publicVisibilitySelect").value = profile.visibility || "private";
-  el("publicFieldsInput").value = (profile.public_fields || []).join(",");
+  setCheckedPublicFields(profile.public_fields || []);
 }
 
 async function savePublicProfileSettings() {
@@ -107,7 +114,7 @@ async function savePublicProfileSettings() {
   const payload = {
     public_slug: el("publicSlugInput").value.trim(),
     visibility: el("publicVisibilitySelect").value,
-    public_fields: splitPublicFields(el("publicFieldsInput").value),
+    public_fields: getCheckedPublicFields(),
   };
   try {
     await api(`/profiles/${encodeURIComponent(profileId)}`, {
@@ -132,7 +139,7 @@ async function loadPublicProfile() {
       const currentProfile = (await api("/profiles")).find((item) => item.id === currentProfileId);
       if (currentProfile) {
         el("publicVisibilitySelect").value = currentProfile.visibility || "private";
-        el("publicFieldsInput").value = (currentProfile.public_fields || []).join(",");
+        setCheckedPublicFields(currentProfile.public_fields || []);
       }
     }
     el("publicProfileResult").innerHTML = `
