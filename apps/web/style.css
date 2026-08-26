@@ -50,3 +50,20 @@ textarea { resize: vertical; }
 .evi.miss { color: var(--warn); }
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #222c44; border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; font-size: 13.5px; z-index: 100; }
 .toast.err { border-color: var(--danger); color: var(--danger); }
+.public-body { min-height: 100vh; }
+.public-main { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+.public-hero h1 { margin: 8px 0 10px; font-size: 32px; }
+.public-summary { margin: 0 0 12px; color: var(--text); line-height: 1.7; }
+.public-list { display: grid; gap: 12px; }
+.public-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px; background: rgba(255,255,255,0.02); }
+.public-item h3 { margin: 0 0 6px; font-size: 16px; }
+.public-item p { margin: 8px 0 0; line-height: 1.7; color: var(--text); }
+@media (max-width: 720px) {
+  .topbar { padding: 12px 14px; gap: 12px; align-items: flex-start; flex-direction: column; }
+  .tabs { width: 100%; overflow-x: auto; padding-bottom: 4px; }
+  main { padding: 16px 14px 40px; }
+  .grid, .two-col { grid-template-columns: 1fr; }
+  .list-item { align-items: flex-start; flex-wrap: wrap; }
+  .public-main { padding: 16px 12px 32px; }
+  .public-hero h1 { font-size: 26px; }
+}

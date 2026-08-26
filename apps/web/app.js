@@ -94,6 +94,7 @@ async function loadPublicProfile() {
       <div><b>${esc(data.display_name)}</b></div>
       <div class="muted">${esc(data.summary || "")}</div>
       <div class="muted">项目 ${data.experiences.length} 条 · 技能 ${data.skills.length} 项</div>
+      <div class="row"><a class="btn" href="/public/${encodeURIComponent(slug)}" target="_blank" rel="noreferrer">打开独立公开页</a></div>
       <pre class="code-block">${esc(JSON.stringify(data, null, 2))}</pre>`;
   } catch (err) {
     toast("公开页加载失败：" + err.message, "err");

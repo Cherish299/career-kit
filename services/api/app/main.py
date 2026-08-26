@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -51,5 +52,15 @@ app.include_router(offer.router, prefix="/api/offer", tags=["offer"])
 
 # 前端静态文件（apps/web）：uvicorn app.main:app 后浏览器打开 http://127.0.0.1:8000
 _web_dir = Path(__file__).resolve().parents[3] / "apps" / "web"
+
+
+@app.get("/public/{slug}", include_in_schema=False)
+def public_profile_page(slug: str):
+    page = _web_dir / "public.html"
+    if not page.is_file():
+        raise FileNotFoundError(page)
+    return FileResponse(page)
+
+
 if _web_dir.is_dir():
     app.mount("/", StaticFiles(directory=_web_dir, html=True), name="web")

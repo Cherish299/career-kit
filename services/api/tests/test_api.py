@@ -117,6 +117,12 @@ def test_import_resume_kit_json(client):
     assert pref["graduate_year"] == "2027"
 
 
+def test_public_profile_page_serves_html(client):
+    response = client.get("/public/demo-profile")
+    assert response.status_code == 200
+    assert "CareerOS Public Profile" in response.text
+
+
 def test_public_profile_returns_whitelisted_fields_only(client):
     created = client.post(
         "/api/profiles",
