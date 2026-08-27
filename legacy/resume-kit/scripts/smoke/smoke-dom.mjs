@@ -20,13 +20,10 @@ const dom = new JSDOM(html, {
   beforeParse(window) {
     window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
     window.ResizeObserver = undefined; /* jsdom 无 ResizeObserver，验证 app 的防御性分支 */
-    /* jsdom 不支持真实导航：拦截所有 <a> 点击并 preventDefault，
-     * 只验证链接被触发（下载/toast 等业务逻辑仍执行），不让 jsdom 尝试跳转，
-     * 从而避免 “Not implemented: navigation (except hash changes)”。 */
-    window.addEventListener("click", (e) => {
-      const target = e.target && e.target.closest ? e.target.closest("a") : null;
-      if (target) e.preventDefault();
-    }, true);
+    /* jsdom 不支持真实导航：彻底禁用 anchor 的激活行为，
+     * 只验证事件触发，不让 jsdom 尝试导航。 */
+    window.HTMLAnchorElement.prototype._activationBehavior = function() {};
+    window.HTMLAreaElement.prototype._activationBehavior = function() {};
   }
 });
 dom.window.addEventListener("error", (e) => errors.push(e.message || String(e.error)));
@@ -35,8 +32,7 @@ if (vc) {
   const orig = vc.emit.bind(vc);
   vc.emit = (method, ...args) => {
     const msg = String(args[0] && args[0].message || args[0]);
-    if (method === "jsdomError" && /Not implemented: window\.(print|prompt)/.test(msg)) return;
-    if (method === "jsdomError" && /Not implemented: navigation/.test(msg)) return; /* 已由 preventDefault 拦截，双保险 */
+    if (method === "jsdomError" && /Not implemented: window\.(print|prompt)|Not implemented: navigation/.test(msg)) return;
     if (method === "jsdomError" || method === "error") consoleErrors.push(msg);
     return orig(method, ...args);
   };
