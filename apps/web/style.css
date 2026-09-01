@@ -66,6 +66,10 @@ textarea { resize: vertical; }
 .public-nav { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px; }
 .chip { background: var(--card); border: 1px solid var(--primary); color: var(--primary); border-radius: 999px; padding: 4px 12px; font-size: 12.5px; }
+.question-card { cursor: pointer; transition: background 0.2s; }
+.question-card:hover { background: var(--bg-hover); }
+.question-card .details { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+.question-card.active .details { display: block; }
 @media (max-width: 720px) {
   .topbar { padding: 12px 14px; gap: 12px; align-items: flex-start; flex-direction: column; }
   .tabs { width: 100%; overflow-x: auto; padding-bottom: 4px; }

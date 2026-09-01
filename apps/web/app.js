@@ -337,9 +337,24 @@ async function generateInterviewPlan() {
   try {
     const data = await api(`/interview-plans/generate?application_id=${encodeURIComponent(applicationId)}`, { method: "POST" });
     el("interviewPlanResult").innerHTML = `
-      <div class="ok">已生成面试准备计划</div>
-      <div class="muted">主题 ${data.topics.length} 项 · 问题 ${data.questions.length} 题</div>
-      <pre class="code-block">${esc(JSON.stringify(data, null, 2))}</pre>`;
+      <div class="ok">✅ 面试准备计划已生成</div>
+      <div class="card">
+        <h3>🎯 重点主题 (${data.topics.length})</h3>
+        <div class="chips">${data.topics.map(t => `<span class="chip" title="${esc(t.reason)}">${esc(t.topic)}</span>`).join("")}</div>
+      </div>
+      <div id="questionCards">
+        ${data.questions.map((q, i) => `
+          <div class="card question-card" onclick="this.classList.toggle('active')">
+            <div class="row">
+              <b>${i + 1}. ${esc(q.question)}</b>
+              <span class="muted">[${esc(q.category)}]</span>
+            </div>
+            <div class="details">
+              <p class="muted">💡 ${esc(q.reason)}</p>
+            </div>
+          </div>
+        `).join("")}
+      </div>`;
   } catch (err) {
     toast("生成失败：" + err.message, "err");
   }
